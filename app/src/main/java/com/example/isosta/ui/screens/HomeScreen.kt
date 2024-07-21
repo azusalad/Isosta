@@ -28,11 +28,6 @@ import coil.request.ImageRequest
 import com.example.isosta.R
 import com.example.isosta.model.Thumbnail
 
-// For the NavHost
-enum class IsostaScreen() {
-    Home,
-    Post
-}
 
 @Composable
 fun HomeScreen(

@@ -68,6 +68,7 @@ dependencies {
     implementation(libs.jsoup)
     implementation(libs.glide)
     implementation(libs.coil.compose)
+    implementation(libs.androidx.navigation.compose)
 
 
     // Added test dependencies
