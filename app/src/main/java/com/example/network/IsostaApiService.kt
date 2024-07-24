@@ -7,7 +7,7 @@ import org.jsoup.Jsoup
 // Needs to be open to override in the FakeIsostaApiService test.
 open class IsostaApiService {
     // Asynchronous function so internet call works in the background
-    open suspend fun getThumbnailPhotos(url: String = "https://imginn.com/hood_anya/"): List<Thumbnail> {
+    open suspend fun getThumbnailPhotos(url: String = "https://imginn.com/suisei.daily.post/"): List<Thumbnail> {
         // Initialize the list to add the thumbnails to
         val thumbnailList = arrayListOf<Thumbnail>()
         // Fetch the website with user agent so we don't get forbidden page

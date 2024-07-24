@@ -1,4 +1,7 @@
 package com.example.isosta.model
 
-class IsostaComment {
-}
+data class IsostaComment(
+    val profilePicture: Int,
+    val profileName: String,
+    val commentText: String
+)

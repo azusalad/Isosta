@@ -49,12 +49,17 @@ fun IsostaApp(
                 modifier = Modifier.padding(paddingValues)
             ) {
                 composable(route = IsostaScreen.Home.name) {
+                    // The main home screen and feed
                     HomeScreen(
                         isostaUiState = isostaViewModel.isostaUiState,
                         // The content padding here is not needed anymore due to the padding being
                         // put on the NavHost
                         //contentPadding = paddingValues,
                     )
+                }
+                composable(route = IsostaScreen.Post.name) {
+                    // The screen that shows when the user clicks on a ThumbnailCard
+
                 }
             }
         }
