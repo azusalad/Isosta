@@ -54,16 +54,6 @@ fun PostScreen(
     commentList: List<IsostaComment>,
     modifier: Modifier = Modifier
 ) {
-//    val mediaList = arrayListOf<Int>()
-//    mediaList.add(R.drawable.d)
-//    mediaList.add(R.drawable.c)
-//    mediaList.add(R.drawable.b)
-//    mediaList.add(R.drawable.a)
-//
-//    val commentList = arrayListOf<IsostaComment>()
-//    commentList.add(IsostaComment(R.drawable.a, "Reona", "Lmao bruh comment"))
-//    commentList.add(IsostaComment(R.drawable.d, "Yui", "Big ass paragraph Big ass paragraph Big ass paragraph Big ass paragraph Big ass paragraph Big ass paragraph Big ass paragraph Big ass paragraph Big ass paragraph Big ass paragraph Big ass paragraph Big ass paragraph Big ass paragraph "))
-//    commentList.add(IsostaComment(R.drawable.c, "Kita", "Comment"))
 
     LazyColumn(
         modifier = modifier.fillMaxSize()
@@ -200,7 +190,6 @@ fun MediaPager(
     })
     Box(
         // Box contains the post images as a pager and the pager indicators
-        //verticalArrangement = Arrangement.Center,
         contentAlignment = Alignment.BottomCenter,
         modifier = modifier.fillMaxWidth().aspectRatio(1f)
     ) {
