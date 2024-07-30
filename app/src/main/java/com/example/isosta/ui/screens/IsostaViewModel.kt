@@ -25,6 +25,11 @@ sealed interface IsostaUiState {
     object Loading : IsostaUiState
 }
 
+data class PageState(
+    var postLink: String,
+    var userLink: String
+)
+
 class IsostaViewModel(
     private val isostaThumbnailsRepository: IsostaThumbnailsRepository
 ): ViewModel() {
@@ -32,6 +37,7 @@ class IsostaViewModel(
     var isostaUiState: IsostaUiState by mutableStateOf(IsostaUiState.Loading)
         private set
         // ^ private setter
+    var pageState = PageState(postLink = "", userLink = "")
 
     init {
         getThumbnailPhotos()

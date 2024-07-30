@@ -20,6 +20,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.isosta.R
+import com.example.isosta.model.IsostaComment
+import com.example.isosta.ui.screens.PostScreen
 
 // Contains composables that render what the user would see in the Isosta App
 
@@ -52,6 +55,10 @@ fun IsostaApp(
                     // The main home screen and feed
                     HomeScreen(
                         isostaUiState = isostaViewModel.isostaUiState,
+                        onThumbnailClicked = {
+                            isostaViewModel.pageState.postLink = it
+                            navController.navigate(IsostaScreen.Post.name)
+                        }
                         // The content padding here is not needed anymore due to the padding being
                         // put on the NavHost
                         //contentPadding = paddingValues,
@@ -59,7 +66,24 @@ fun IsostaApp(
                 }
                 composable(route = IsostaScreen.Post.name) {
                     // The screen that shows when the user clicks on a ThumbnailCard
+                    val mediaList = arrayListOf<Int>()
+                    mediaList.add(R.drawable.broken_image)
+                    mediaList.add(R.drawable.hourglass_top)
+                    mediaList.add(R.drawable.ic_launcher_background)
+                    mediaList.add(R.drawable.ic_launcher_foreground)
 
+                    val commentList = arrayListOf<IsostaComment>()
+                    commentList.add(IsostaComment(R.drawable.broken_image, "Broken image", "Comment"))
+                    commentList.add(IsostaComment(R.drawable.hourglass_top, "Hourglass", "Comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment commentv"))
+                    commentList.add(IsostaComment(R.drawable.ic_launcher_background, "Launcher background", "Comment"))
+                    PostScreen(
+                        profilePicture = R.drawable.ic_launcher_background,
+                        profileName = "Profile Name",
+                        profileHandle = "@profilehandle",
+                        postDescription = "Post description",
+                        mediaList = mediaList,
+                        commentList = commentList,
+                    )
                 }
             }
         }

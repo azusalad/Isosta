@@ -32,6 +32,7 @@ import com.example.isosta.model.Thumbnail
 @Composable
 fun HomeScreen(
     isostaUiState: IsostaUiState,
+    onThumbnailClicked: (String) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
@@ -39,7 +40,7 @@ fun HomeScreen(
     when (isostaUiState) {
         is IsostaUiState.Loading -> TextMessageScreen(text = "Loading thumbnails", modifier = modifier.fillMaxSize())
         is IsostaUiState.Success -> ThumbnailList(
-            thumbnailList = isostaUiState.thumbnailPhotos, modifier = modifier.fillMaxWidth(), contentPadding = contentPadding,
+            thumbnailList = isostaUiState.thumbnailPhotos, onThumbnailClicked = onThumbnailClicked, modifier = modifier.fillMaxWidth(), contentPadding = contentPadding,
         )
         //is IsostaUiState.Success -> TextMessageScreen(text = isostaUiState.thumbnailPhotos, modifier = modifier.fillMaxWidth())
         is IsostaUiState.Error -> TextMessageScreen(text = "There was a error loading thumbnails", modifier = modifier.fillMaxSize())
@@ -49,6 +50,7 @@ fun HomeScreen(
 @Composable
 fun ThumbnailList(
     thumbnailList: List<Thumbnail>,
+    onThumbnailClicked: (String) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
@@ -56,6 +58,7 @@ fun ThumbnailList(
         items(thumbnailList) { thumbnail ->
             ThumbnailCard(
                 thumbnail = thumbnail,
+                onThumbnailClicked = onThumbnailClicked,
                 modifier = Modifier.padding(8.dp)
             )
         }
@@ -63,14 +66,16 @@ fun ThumbnailList(
 }
 
 @Composable
-fun ThumbnailCard(thumbnail: Thumbnail, modifier: Modifier = Modifier) {
+fun ThumbnailCard(
+    thumbnail: Thumbnail, onThumbnailClicked: (String) -> Unit, modifier: Modifier = Modifier
+) {
     println("LOG: The current picture is: " + thumbnail.picture)
     val picture = """
         https://mars.jpl.nasa.gov/msl-raw-images/msss/01000/mcam/1000MR0044631300503690E01_DXXX.jpg
         """
     Card(
         // User clicks on the thumbnail card.  Load full Isosta post on click.
-        onClick = {},
+        onClick = {onThumbnailClicked(thumbnail.postLink)},
         modifier = modifier
     ) {
         Column {
@@ -127,5 +132,5 @@ fun ThumbnailCardPreview() {
     val picture = """
         https://mars.jpl.nasa.gov/msl-raw-images/msss/01000/mcam/1000MR0044631300503690E01_DXXX.jpg
         """
-    ThumbnailCard(thumbnail = Thumbnail(picture = picture, text = "Mars photo"))
+    //ThumbnailCard(thumbnail = Thumbnail(picture = picture, text = "Mars photo", postLink = "", onThumbnailClicked = {}))
 }

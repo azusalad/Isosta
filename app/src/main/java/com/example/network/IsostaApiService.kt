@@ -24,10 +24,12 @@ open class IsostaApiService {
             // Get the information text for the thumbnail.  Cut out the alt part that describes the picture.
             // Like "May be an image containing text"
             val imageText = i.getElementsByTag("img").attr("alt").split(".")[0]
+            // Get the post link
+            val postLink = i.getElementsByTag("a").attr("href")
             // The src might be not be https source but instead //assets... so only take the https srcs
             if (imageSrc[0] == 'h') {
                 println("LOG: the imagesrc is: $imageSrc")
-                val newThumbnail = Thumbnail(picture = imageSrc, text = imageText)
+                val newThumbnail = Thumbnail(picture = imageSrc, text = imageText, postLink = postLink)
                 thumbnailList.add(newThumbnail)
             }
         }
