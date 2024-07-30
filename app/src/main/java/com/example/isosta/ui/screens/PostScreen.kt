@@ -46,6 +46,7 @@ import com.example.isosta.model.Thumbnail
 // Show this screen when a ThumbnailCard is clicked.
 @Composable
 fun PostScreen(
+    isostaUiState: IsostaUiState,
     profilePicture: Int,
     profileName: String,
     profileHandle: String,
@@ -54,7 +55,33 @@ fun PostScreen(
     commentList: List<IsostaComment>,
     modifier: Modifier = Modifier
 ) {
+    // Switch statement shows different things depending on the IsostaUiState
+    when (isostaUiState) {
+        is IsostaUiState.Loading -> TextMessageScreen(text = "Loading thumbnails", modifier = modifier.fillMaxSize())
+        is IsostaUiState.Success -> PostColumn(
+            profilePicture = profilePicture,
+            profileName = profileName,
+            profileHandle = profileHandle,
+            postDescription = postDescription,
+            mediaList = mediaList,
+            commentList = commentList,
+            modifier = modifier
+        )
+        //is IsostaUiState.Success -> TextMessageScreen(text = isostaUiState.thumbnailPhotos, modifier = modifier.fillMaxWidth())
+        is IsostaUiState.Error -> TextMessageScreen(text = "There was a error loading thumbnails", modifier = modifier.fillMaxSize())
+    }
+}
 
+@Composable
+fun PostColumn(
+    profilePicture: Int,
+    profileName: String,
+    profileHandle: String,
+    postDescription: String,
+    mediaList: List<Int>,
+    commentList: List<IsostaComment>,
+    modifier: Modifier = Modifier
+) {
     LazyColumn(
         modifier = modifier.fillMaxSize()
     ) {
@@ -80,6 +107,8 @@ fun PostScreen(
         }
     }
 }
+
+
 
 // The entire card composable containing the post images, description, author information, etc
 @OptIn(ExperimentalFoundationApi::class)
@@ -290,7 +319,7 @@ fun PostScreenPreview() {
     commentList.add(IsostaComment(R.drawable.broken_image, "Broken image", "Comment"))
     commentList.add(IsostaComment(R.drawable.hourglass_top, "Hourglass", "Comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment commentv"))
     commentList.add(IsostaComment(R.drawable.ic_launcher_background, "Launcher background", "Comment"))
-    PostScreen(
+    PostColumn(
         profilePicture = R.drawable.ic_launcher_background,
         profileName = "Profile Name",
         profileHandle = "@profilehandle",

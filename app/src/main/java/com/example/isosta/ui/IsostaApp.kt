@@ -77,6 +77,7 @@ fun IsostaApp(
                     commentList.add(IsostaComment(R.drawable.hourglass_top, "Hourglass", "Comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment commentv"))
                     commentList.add(IsostaComment(R.drawable.ic_launcher_background, "Launcher background", "Comment"))
                     PostScreen(
+                        isostaUiState = isostaViewModel.isostaUiState,
                         profilePicture = R.drawable.ic_launcher_background,
                         profileName = "Profile Name",
                         profileHandle = "@profilehandle",
