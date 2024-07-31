@@ -74,7 +74,16 @@ open class IsostaApiService {
             .getElementsByTag("img")
         println("INFO: allMediaInfo = " + allMediaInfo)
         for (i in allMediaInfo) {
-            val imageSrc = i.getElementsByTag("img").attr("src")
+            var imageSrc = i.getElementsByTag("img").attr("src")
+            // The first two images will have the link under the src attribute, however the
+            // other images will have a placeholder lazy image under the src attribute.
+            // The data-src attribute seems to have the correct link
+            if (imageSrc[0] != 'h') {
+                imageSrc = i.getElementsByTag("img").attr("data-src")
+            }
+            if (imageSrc == "") {
+                continue
+            }
             println("LOG: imageSrc = " + imageSrc)
             val imageText = i.getElementsByTag("img").attr("alt")
             println("LOG: imageText = " + imageText)
@@ -88,7 +97,10 @@ open class IsostaApiService {
         val allCommentsInfo = doc.getElementsByClass("comments")[0].getElementsByClass("comment")
         println("INFO: allCommentsInfo = " + allCommentsInfo)
         for (i in allCommentsInfo) {
-            val commentProfilePicture = i.getElementsByTag("img")[0].attr("src")
+            var commentProfilePicture = i.getElementsByTag("img")[0].attr("src")
+            if (commentProfilePicture[0] != 'h') {
+                commentProfilePicture = i.getElementsByTag("img")[0].attr("data-src")
+            }
             println("LOG: commentProfilePicture = " + commentProfilePicture)
             val commentProfileLink = hostName + i.getElementsByClass("con")[0].getElementsByTag("a")[0].attr("href")
             println("LOG: commentProfileLink = " + commentProfileLink)
