@@ -59,6 +59,7 @@ fun IsostaApp(
                         onThumbnailClicked = {
                             isostaViewModel.pageState.postLink = it
                             navController.navigate(IsostaScreen.Post.name)
+                            isostaViewModel.getPostInfo()
                         }
                         // The content padding here is not needed anymore due to the padding being
                         // put on the NavHost
@@ -67,7 +68,10 @@ fun IsostaApp(
                 }
                 composable(route = IsostaScreen.Post.name) {
                     // The screen that shows when the user clicks on a ThumbnailCard
-                    PostScreenPreview()
+                    //PostScreenPreview()
+                    PostScreen(
+                        isostaPostUiState = isostaViewModel.isostaPostUiState
+                    )
 //                    val mediaList = arrayListOf<Int>()
 //                    mediaList.add(R.drawable.broken_image)
 //                    mediaList.add(R.drawable.hourglass_top)

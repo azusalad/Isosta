@@ -51,19 +51,20 @@ import com.example.isosta.model.Thumbnail
 // Show this screen when a ThumbnailCard is clicked.
 @Composable
 fun PostScreen(
-    isostaUiState: IsostaUiState,
-    isostaPost: IsostaPost,
+    isostaPostUiState: IsostaPostUiState,
+    //isostaPost: IsostaPost,
     modifier: Modifier = Modifier
 ) {
     // Switch statement shows different things depending on the IsostaUiState
-    when (isostaUiState) {
-        is IsostaUiState.Loading -> TextMessageScreen(text = "Loading thumbnails", modifier = modifier.fillMaxSize())
-        is IsostaUiState.Success -> PostColumn(
-            isostaPost = isostaPost,
-            modifier = modifier
+    when (isostaPostUiState) {
+        is IsostaPostUiState.Loading -> {
+            TextMessageScreen(text = "Loading post", modifier = modifier.fillMaxSize())
+        }
+        is IsostaPostUiState.Success -> PostColumn(
+            isostaPost = isostaPostUiState.isostaPost, modifier = modifier
         )
         //is IsostaUiState.Success -> TextMessageScreen(text = isostaUiState.thumbnailPhotos, modifier = modifier.fillMaxWidth())
-        is IsostaUiState.Error -> TextMessageScreen(text = "There was a error loading thumbnails", modifier = modifier.fillMaxSize())
+        is IsostaPostUiState.Error -> TextMessageScreen(text = "There was a error loading the post", modifier = modifier.fillMaxSize())
     }
 }
 
@@ -362,21 +363,21 @@ fun PostScreenPreview() {
     val picture = "https://avatars.githubusercontent.com/u/68360714?v=4"
     val commentList = arrayListOf<IsostaComment>()
     val mediaList = arrayListOf<PostMedia>()
-    mediaList.add(PostMedia(mediaSrc = picture, mediaText = "mars photo"))
-    mediaList.add(PostMedia(mediaSrc = picture, mediaText = "mars photo2"))
+    mediaList.add(PostMedia(mediaSrc = picture, mediaText = "yui photo"))
+    mediaList.add(PostMedia(mediaSrc = picture, mediaText = "yui photo2"))
     commentList.add(IsostaComment(user = IsostaUser(profilePicture = picture,
-        profileHandle = "@mars",
+        profileHandle = "@yui",
         profileLink = "",
-        profileName = "Mars"), commentText = "Comment"))
+        profileName = "Yui"), commentText = "Comment"))
     PostColumn(
         isostaPost = IsostaPost(
             commentList = commentList,
             mediaList = mediaList,
             poster = IsostaUser(profilePicture = picture,
-                profileHandle = "@mars",
+                profileHandle = "@yui",
                 profileLink = "",
-                profileName = "Mars"),
-            postDescription = "MARS DESCRIPTION"
+                profileName = "Yui"),
+            postDescription = "YUI DESCRIPTION"
         )
     )
 }

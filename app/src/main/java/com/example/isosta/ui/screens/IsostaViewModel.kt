@@ -10,8 +10,10 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.isosta.IsostaThumbnailsApplication
+import com.example.isosta.data.IsostaPostRepository
 import com.example.isosta.data.IsostaThumbnailsRepository
 import com.example.isosta.data.NetworkIsostaThumbnailsRepository
+import com.example.isosta.model.IsostaPost
 import com.example.isosta.model.Thumbnail
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -25,18 +27,28 @@ sealed interface IsostaUiState {
     object Loading : IsostaUiState
 }
 
+sealed interface IsostaPostUiState {
+    data class Success(val isostaPost: IsostaPost) : IsostaPostUiState
+    object Error : IsostaPostUiState
+    object Loading : IsostaPostUiState
+}
+
 data class PageState(
     var postLink: String,
     var userLink: String
 )
 
 class IsostaViewModel(
-    private val isostaThumbnailsRepository: IsostaThumbnailsRepository
+    private val isostaThumbnailsRepository: IsostaThumbnailsRepository,
+    private val isostaPostRepository: IsostaPostRepository
 ): ViewModel() {
     // Mutable state stores the status of the most recent request.  The initial state is loading.
     var isostaUiState: IsostaUiState by mutableStateOf(IsostaUiState.Loading)
         private set
         // ^ private setter
+    var isostaPostUiState: IsostaPostUiState by mutableStateOf(IsostaPostUiState.Loading)
+        private set
+
     var pageState = PageState(postLink = "", userLink = "")
 
     init {
@@ -68,6 +80,24 @@ class IsostaViewModel(
         }
     }
 
+    fun getPostInfo() {
+        viewModelScope.launch {
+            isostaPostUiState = IsostaPostUiState.Loading
+            try {
+                println("LOG: Attempting to fetch post")
+                withContext(Dispatchers.IO) {
+                    val result = isostaPostRepository.getPostInfo()
+                    isostaPostUiState =
+                        IsostaPostUiState.Success(result)
+                }
+            } catch (e:IOException) {
+                IsostaPostUiState.Error
+                println("LOG: There was an error fetching the post")
+                println("LOG: the error for fetching the post is " + e)
+            }
+        }
+    }
+
     // The viewmodel does not allow arguments to be passed in when the viewmodel is created.
     // Use a factory instead to solve this issue.
     companion object {
@@ -75,7 +105,8 @@ class IsostaViewModel(
             initializer {
                 val application = (this[APPLICATION_KEY] as IsostaThumbnailsApplication)
                 val isostaThumbnailsRepository = application.container.isostaThumbnailsRepository
-                IsostaViewModel(isostaThumbnailsRepository = isostaThumbnailsRepository)
+                val isostaPostRepository = application.container.isostaPostRepository
+                IsostaViewModel(isostaThumbnailsRepository = isostaThumbnailsRepository, isostaPostRepository = isostaPostRepository)
             }
         }
     }

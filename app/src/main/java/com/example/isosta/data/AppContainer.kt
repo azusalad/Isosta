@@ -5,6 +5,7 @@ import com.example.network.IsostaApiService
 // The app container contains dependencies that the app requires.
 interface AppContainer {
     val isostaThumbnailsRepository: IsostaThumbnailsRepository
+    val isostaPostRepository: IsostaPostRepository
 }
 
 class DefaultAppContainer : AppContainer {
@@ -15,5 +16,8 @@ class DefaultAppContainer : AppContainer {
 
     override val isostaThumbnailsRepository: IsostaThumbnailsRepository by lazy {
         NetworkIsostaThumbnailsRepository(isostaService)
+    }
+    override val isostaPostRepository: IsostaPostRepository by lazy {
+        NetworkIsostaPostRepository(isostaService)
     }
 }
