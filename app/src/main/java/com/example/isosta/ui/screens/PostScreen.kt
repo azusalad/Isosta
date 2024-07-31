@@ -39,33 +39,27 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.isosta.R
 import com.example.isosta.model.IsostaComment
+import com.example.isosta.model.IsostaPost
 import com.example.isosta.model.IsostaUser
+import com.example.isosta.model.PostMedia
 import com.example.isosta.model.Thumbnail
 
 // Show this screen when a ThumbnailCard is clicked.
 @Composable
 fun PostScreen(
     isostaUiState: IsostaUiState,
-    profilePicture: Int,
-    profileName: String,
-    profileHandle: String,
-    postDescription: String,
-    mediaList: List<Int>,
-    commentList: List<IsostaComment>,
+    isostaPost: IsostaPost,
     modifier: Modifier = Modifier
 ) {
     // Switch statement shows different things depending on the IsostaUiState
     when (isostaUiState) {
         is IsostaUiState.Loading -> TextMessageScreen(text = "Loading thumbnails", modifier = modifier.fillMaxSize())
         is IsostaUiState.Success -> PostColumn(
-            profilePicture = profilePicture,
-            profileName = profileName,
-            profileHandle = profileHandle,
-            postDescription = postDescription,
-            mediaList = mediaList,
-            commentList = commentList,
+            isostaPost = isostaPost,
             modifier = modifier
         )
         //is IsostaUiState.Success -> TextMessageScreen(text = isostaUiState.thumbnailPhotos, modifier = modifier.fillMaxWidth())
@@ -75,12 +69,13 @@ fun PostScreen(
 
 @Composable
 fun PostColumn(
-    profilePicture: Int,
-    profileName: String,
-    profileHandle: String,
-    postDescription: String,
-    mediaList: List<Int>,
-    commentList: List<IsostaComment>,
+    isostaPost: IsostaPost,
+//    profilePicture: Int,
+//    profileName: String,
+//    profileHandle: String,
+//    postDescription: String,
+//    mediaList: List<Int>,
+//    commentList: List<IsostaComment>,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -88,11 +83,11 @@ fun PostColumn(
     ) {
         item {
             PostCard(
-                profilePicture = profilePicture,
-                profileName = profileName,
-                profileHandle = profileHandle,
-                postDescription = postDescription,
-                mediaList = mediaList
+                profilePicture = isostaPost.poster.profilePicture,
+                profileName = isostaPost.poster.profileName,
+                profileHandle = isostaPost.poster.profileHandle,
+                postDescription = isostaPost.postDescription,
+                mediaList = isostaPost.mediaList
             )
         }
         item {
@@ -102,7 +97,7 @@ fun PostColumn(
                 modifier = modifier.padding(10.dp)
             )
         }
-        items(commentList) { commentInformation ->
+        items(isostaPost.commentList) { commentInformation ->
             CommentCard(isostaComment = commentInformation)
             Spacer(modifier = Modifier.height(20.dp))
         }
@@ -115,11 +110,11 @@ fun PostColumn(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PostCard(
-    profilePicture: Int,
+    profilePicture: String,
     profileName: String,
     profileHandle: String,
     postDescription: String,
-    mediaList: List<Int>,
+    mediaList: List<PostMedia>,
     modifier: Modifier = Modifier
 ) {
     val haptics = LocalHapticFeedback.current
@@ -152,7 +147,7 @@ fun PostCard(
 // Top author information with profile picture.
 @Composable
 fun AuthorInformation(
-    profilePicture: Int,
+    profilePicture: String,
     profileName: String,
     profileHandle: String,
     onClick: () -> Unit,
@@ -165,12 +160,25 @@ fun AuthorInformation(
         Box(
             modifier = Modifier.weight(1f)
         ) {
-            Image(
-                painter = painterResource(profilePicture),
-                contentDescription = "Profile Picture",
+//            Image(
+//                painter = painterResource(profilePicture),
+//                contentDescription = "Profile Picture",
+//                contentScale = ContentScale.Fit,
+//                modifier = Modifier
+//                    .clip(CircleShape)
+//            )
+            AsyncImage(
+                model = ImageRequest.Builder(context = LocalContext.current)
+                    .data(profilePicture)
+                    .crossfade(true)
+                    .setHeader("User-Agent", "Mozilla/5.0")
+                    .build(),
+                error = painterResource(R.drawable.broken_image),
+                placeholder = painterResource(R.drawable.hourglass_top),
+                contentDescription = "Poster profile picture",
                 contentScale = ContentScale.Fit,
                 modifier = Modifier
-                    .clip(CircleShape)
+                    .clip(CircleShape),
             )
         }
         Box(
@@ -210,10 +218,10 @@ fun AuthorInformation(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MediaPager(
-    mediaList: List<Int>,
+    mediaList: List<PostMedia>,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
+    //val context = LocalContext.current
     // Show all the media in this post in a horizontal pager
     val pagerState = rememberPagerState(pageCount = {
         mediaList.size
@@ -228,13 +236,29 @@ fun MediaPager(
             modifier = Modifier.fillMaxSize()
         ) { page ->
             // Pager content
-            Image(
-                painter = painterResource(mediaList[page]),
-                contentDescription = "BRUH",
+//            Image(
+//                painter = painterResource(mediaList[page]),
+//                contentDescription = "BRUH",
+//                contentScale = ContentScale.Fit,
+//                modifier = Modifier.fillMaxSize().clickable(
+//                    onClick = {/* TODO */},
+//                )
+//            )
+            print("LOG: the image src for this page is " + mediaList[page].mediaSrc)
+            AsyncImage(
+                model = ImageRequest.Builder(context = LocalContext.current)
+                    .data(mediaList[page].mediaSrc)
+                    .crossfade(true)
+                    .setHeader("User-Agent", "Mozilla/5.0")
+                    .build(),
+                error = painterResource(R.drawable.broken_image),
+                placeholder = painterResource(R.drawable.hourglass_top),
+                contentDescription = mediaList[page].mediaText,
                 contentScale = ContentScale.Fit,
-                modifier = Modifier.fillMaxSize().clickable(
-                    onClick = {/* TODO */},
-                )
+                modifier = Modifier
+                    .fillMaxSize().clickable(
+                        onClick = {/* TODO */}
+                    ),
             )
 
         }
@@ -268,12 +292,31 @@ fun CommentCard(
     modifier: Modifier = Modifier
 ) {
     val clipboardManager = LocalClipboardManager.current
+    print("LOG: the profile picture for this comment is " + isostaComment.user.profilePicture)
     Card(modifier = modifier.fillMaxWidth()) {
         Row (modifier = modifier.padding(5.dp)) {
             // Profile Picture
-            Image(
-                painter = painterResource(isostaComment.profilePicture),
-                contentDescription = "Profile Picture",
+//            Image(
+//                painter = painterResource(isostaComment.profilePicture),
+//                contentDescription = "Profile Picture",
+//                contentScale = ContentScale.Crop,
+//                modifier = Modifier
+//                    .aspectRatio(1f/1f)
+//                    .clip(CircleShape)
+//                    .weight(1f)
+//                    .clickable(
+//                        onClick = {/* TODO: Open author page */}
+//                    )
+//            )
+            AsyncImage(
+                model = ImageRequest.Builder(context = LocalContext.current)
+                    .data(isostaComment.user.profilePicture)
+                    .crossfade(true)
+                    .setHeader("User-Agent", "Mozilla/5.0")
+                    .build(),
+                error = painterResource(R.drawable.broken_image),
+                placeholder = painterResource(R.drawable.hourglass_top),
+                contentDescription = "Comment profile picture",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .aspectRatio(1f/1f)
@@ -286,7 +329,7 @@ fun CommentCard(
             Column(modifier = Modifier.padding(10.dp).weight(5f)) {
                 // Profile name and comment text
                 Text(
-                    text = isostaComment.profileName,
+                    text = isostaComment.user.profileHandle,
                     style = MaterialTheme.typography.headlineSmall,
                     modifier = Modifier.clickable(
                         onClick = {/* TODO: Open author page */}
@@ -310,22 +353,30 @@ fun CommentCard(
 @Preview
 @Composable
 fun PostScreenPreview() {
-    val mediaList = arrayListOf<Int>()
-    mediaList.add(R.drawable.broken_image)
-    mediaList.add(R.drawable.hourglass_top)
-    mediaList.add(R.drawable.ic_launcher_background)
-    mediaList.add(R.drawable.ic_launcher_foreground)
+//    val mediaList = arrayListOf<Int>()
+//    mediaList.add(R.drawable.broken_image)
+//    mediaList.add(R.drawable.hourglass_top)
+//    mediaList.add(R.drawable.ic_launcher_background)
+//    mediaList.add(R.drawable.ic_launcher_foreground)
 
+    val picture = "https://avatars.githubusercontent.com/u/68360714?v=4"
     val commentList = arrayListOf<IsostaComment>()
-    commentList.add(IsostaComment(R.drawable.broken_image, "Broken image", "Comment"))
-    commentList.add(IsostaComment(R.drawable.hourglass_top, "Hourglass", "Comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment commentv"))
-    commentList.add(IsostaComment(R.drawable.ic_launcher_background, "Launcher background", "Comment"))
+    val mediaList = arrayListOf<PostMedia>()
+    mediaList.add(PostMedia(mediaSrc = picture, mediaText = "mars photo"))
+    mediaList.add(PostMedia(mediaSrc = picture, mediaText = "mars photo2"))
+    commentList.add(IsostaComment(user = IsostaUser(profilePicture = picture,
+        profileHandle = "@mars",
+        profileLink = "",
+        profileName = "Mars"), commentText = "Comment"))
     PostColumn(
-        profilePicture = R.drawable.ic_launcher_background,
-        profileName = "Profile Name",
-        profileHandle = "@profilehandle",
-        postDescription = "Post description",
-        mediaList = mediaList,
-        commentList = commentList,
+        isostaPost = IsostaPost(
+            commentList = commentList,
+            mediaList = mediaList,
+            poster = IsostaUser(profilePicture = picture,
+                profileHandle = "@mars",
+                profileLink = "",
+                profileName = "Mars"),
+            postDescription = "MARS DESCRIPTION"
+        )
     )
 }
