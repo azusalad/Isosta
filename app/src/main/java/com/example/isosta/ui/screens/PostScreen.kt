@@ -41,6 +41,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.isosta.R
 import com.example.isosta.model.IsostaComment
+import com.example.isosta.model.IsostaUser
 import com.example.isosta.model.Thumbnail
 
 // Show this screen when a ThumbnailCard is clicked.
