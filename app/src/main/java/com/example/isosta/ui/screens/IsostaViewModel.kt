@@ -33,10 +33,10 @@ sealed interface IsostaPostUiState {
     object Loading : IsostaPostUiState
 }
 
-data class PageState(
-    var postLink: String,
-    var userLink: String
-)
+//data class PageState(
+//    var postLink: String,
+//    var userLink: String
+//)
 
 class IsostaViewModel(
     private val isostaThumbnailsRepository: IsostaThumbnailsRepository,
@@ -49,7 +49,7 @@ class IsostaViewModel(
     var isostaPostUiState: IsostaPostUiState by mutableStateOf(IsostaPostUiState.Loading)
         private set
 
-    var pageState = PageState(postLink = "", userLink = "")
+//    var pageState = PageState(postLink = "", userLink = "")
 
     init {
         getThumbnailPhotos()
@@ -80,13 +80,13 @@ class IsostaViewModel(
         }
     }
 
-    fun getPostInfo() {
+    fun getPostInfo(url: String) {
         viewModelScope.launch {
             isostaPostUiState = IsostaPostUiState.Loading
             try {
                 println("LOG: Attempting to fetch post")
                 withContext(Dispatchers.IO) {
-                    val result = isostaPostRepository.getPostInfo()
+                    val result = isostaPostRepository.getPostInfo(url)
                     isostaPostUiState =
                         IsostaPostUiState.Success(result)
                 }

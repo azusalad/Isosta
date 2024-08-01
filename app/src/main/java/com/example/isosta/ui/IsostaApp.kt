@@ -57,9 +57,11 @@ fun IsostaApp(
                     HomeScreen(
                         isostaUiState = isostaViewModel.isostaUiState,
                         onThumbnailClicked = {
-                            isostaViewModel.pageState.postLink = it
+                            // it is the url to go to
+                            //isostaViewModel.pageState.postLink = it
                             navController.navigate(IsostaScreen.Post.name)
-                            isostaViewModel.getPostInfo()
+                            println("LOG: getting post info for " + it)
+                            isostaViewModel.getPostInfo(it)
                         }
                         // The content padding here is not needed anymore due to the padding being
                         // put on the NavHost

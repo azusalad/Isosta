@@ -5,14 +5,14 @@ import com.example.isosta.model.Thumbnail
 import com.example.network.IsostaApiService
 
 interface IsostaPostRepository {
-    suspend fun getPostInfo(): IsostaPost
+    suspend fun getPostInfo(url: String): IsostaPost
 }
 
 class NetworkIsostaPostRepository(
     // Dependency injection for what service to use
     private val isostaApiService: IsostaApiService
 ) : IsostaPostRepository {
-    override suspend fun getPostInfo(): IsostaPost {
-        return isostaApiService.getPostInfo()
+    override suspend fun getPostInfo(url: String): IsostaPost {
+        return isostaApiService.getPostInfo(url)
     }
 }

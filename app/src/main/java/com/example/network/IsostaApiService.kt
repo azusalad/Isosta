@@ -11,8 +11,9 @@ import org.jsoup.Jsoup
 
 // Needs to be open to override in the FakeIsostaApiService test.
 open class IsostaApiService {
-    // Asynchronous function so internet call works in the background
+        // Asynchronous function so internet call works in the background
     open suspend fun getThumbnailPhotos(url: String = "https://imginn.com/suisei.daily.post/"): List<Thumbnail> {
+        val hostName = "https://imginn.com"
         // Initialize the list to add the thumbnails to
         val thumbnailList = arrayListOf<Thumbnail>()
         // Fetch the website with user agent so we don't get forbidden page
@@ -30,7 +31,7 @@ open class IsostaApiService {
             // Like "May be an image containing text"
             val imageText = i.getElementsByTag("img").attr("alt").split(".")[0]
             // Get the post link
-            val postLink = i.getElementsByTag("a").attr("href")
+            val postLink = hostName + i.getElementsByTag("a").attr("href")
             // The src might be not be https source but instead //assets... so only take the https srcs
             if (imageSrc[0] == 'h') {
                 println("LOG: the imagesrc is: $imageSrc")
@@ -45,12 +46,14 @@ open class IsostaApiService {
     open suspend fun getPostInfo(url: String = "https://imginn.com/p/C-DJ4Z0hSjy"): IsostaPost {
         println("LOG: getPostInfo() called")
         val hostName = "https://imginn.com"
-        // Intialize the media list to add pictures to
+
+        // Initialize the media list to add pictures to
         val mediaList = arrayListOf<PostMedia>()
         val commentList = arrayListOf<IsostaComment>()
         // Fetch the website with user agent so we don't get forbidden page
         val doc = Jsoup.connect(url).userAgent("Mozilla").get()
         println("INFO: The doc of the post: " + doc)
+
         // Get the poster's information
         val posterInfo = doc.getElementsByClass("user")[0]
         println("INFO: posterInfo = " + posterInfo)
@@ -69,6 +72,7 @@ open class IsostaApiService {
             profileHandle = posterProfileHandle,
             profilePicture = posterProfilePicture,
             profileLink = posterProfileLink)
+
         // Get media information
         val allMediaInfo = doc.getElementsByClass("swiper-wrapper")[0]
             .getElementsByTag("img")
@@ -90,35 +94,41 @@ open class IsostaApiService {
             val newMedia = PostMedia(mediaSrc = imageSrc, mediaText = imageText)
             mediaList.add(newMedia)
         }
+
         // Get description
         val postDescription = doc.getElementsByClass("desc")[0].text()
         println("LOG: postDescription = " + postDescription)
+
         // Get comments
-        val allCommentsInfo = doc.getElementsByClass("comments")[0].getElementsByClass("comment")
-        println("INFO: allCommentsInfo = " + allCommentsInfo)
-        for (i in allCommentsInfo) {
-            var commentProfilePicture = i.getElementsByTag("img")[0].attr("src")
-            if (commentProfilePicture[0] != 'h') {
-                commentProfilePicture = i.getElementsByTag("img")[0].attr("data-src")
-            }
-            println("LOG: commentProfilePicture = " + commentProfilePicture)
-            val commentProfileLink = hostName + i.getElementsByClass("con")[0].getElementsByTag("a")[0].attr("href")
-            println("LOG: commentProfileLink = " + commentProfileLink)
-            val commentProfileHandle = i.getElementsByClass("con")[0].getElementsByTag("h3")[0].text()
-            println("LOG: commentProfileHandle = " + commentProfileHandle)
-            val commentText = i.getElementsByClass("con")[0].getElementsByTag("p")[0].text()
-            println("LOG: commentText = " + commentText)
-            val newComment = IsostaComment(
-                commentText = commentText,
-                user = IsostaUser(
-                    profilePicture = commentProfilePicture,
-                    profileLink = commentProfileLink,
-                    profileHandle = commentProfileHandle,
-                    profileName = "Unknown"
+        var allCommentsInfo = doc.getElementsByClass("comments")  // Might be no comments
+        if (allCommentsInfo.size > 0) {
+            allCommentsInfo = allCommentsInfo[0].getElementsByClass("comment")
+            println("INFO: allCommentsInfo = " + allCommentsInfo)
+            for (i in allCommentsInfo) {
+                var commentProfilePicture = i.getElementsByTag("img")[0].attr("src")
+                if (commentProfilePicture[0] != 'h') {
+                    commentProfilePicture = i.getElementsByTag("img")[0].attr("data-src")
+                }
+                println("LOG: commentProfilePicture = " + commentProfilePicture)
+                val commentProfileLink = hostName + i.getElementsByClass("con")[0].getElementsByTag("a")[0].attr("href")
+                println("LOG: commentProfileLink = " + commentProfileLink)
+                val commentProfileHandle = i.getElementsByClass("con")[0].getElementsByTag("h3")[0].text()
+                println("LOG: commentProfileHandle = " + commentProfileHandle)
+                val commentText = i.getElementsByClass("con")[0].getElementsByTag("p")[0].text()
+                println("LOG: commentText = " + commentText)
+                val newComment = IsostaComment(
+                    commentText = commentText,
+                    user = IsostaUser(
+                        profilePicture = commentProfilePicture,
+                        profileLink = commentProfileLink,
+                        profileHandle = commentProfileHandle,
+                        profileName = "Unknown"
+                    )
                 )
-            )
-            commentList.add(newComment)
+                commentList.add(newComment)
+            }
         }
+
         // Combine all information and return
         println("LOG: getPostInfo() completed")
         return IsostaPost(
