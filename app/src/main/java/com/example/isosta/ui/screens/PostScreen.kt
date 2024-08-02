@@ -45,6 +45,7 @@ import com.example.isosta.model.IsostaComment
 import com.example.isosta.model.IsostaPost
 import com.example.isosta.model.IsostaUser
 import com.example.isosta.model.PostMedia
+import com.example.isosta.ui.components.TextMessageScreen
 
 // Show this screen when a ThumbnailCard is clicked.
 @Composable

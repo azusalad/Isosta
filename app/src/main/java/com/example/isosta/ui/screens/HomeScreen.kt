@@ -27,6 +27,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.isosta.R
 import com.example.isosta.model.Thumbnail
+import com.example.isosta.ui.components.TextMessageScreen
 
 
 @Composable
@@ -103,22 +104,6 @@ fun ThumbnailCard(
     }
 }
 
-@Composable
-fun TextMessageScreen(text: String, modifier: Modifier = Modifier) {
-    println("LOG: Loading text message screen with the text: " + text)
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = modifier
-    ) {
-        Text(
-            text = text,
-            textAlign = TextAlign.Center,
-            fontSize = 75.sp,
-            lineHeight = 75.sp,
-            color = Color.Blue
-        )
-    }
-}
 
 //@Preview
 @Composable
