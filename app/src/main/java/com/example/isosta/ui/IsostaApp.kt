@@ -13,6 +13,7 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import com.example.isosta.ui.screens.HomeScreen
 import com.example.isosta.ui.screens.IsostaViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -71,8 +72,10 @@ fun IsostaApp(
                 composable(route = IsostaScreen.Post.name) {
                     // The screen that shows when the user clicks on a ThumbnailCard
                     //PostScreenPreview()
+                    val context = LocalContext.current
                     PostScreen(
-                        isostaPostUiState = isostaViewModel.isostaPostUiState
+                        isostaPostUiState = isostaViewModel.isostaPostUiState,
+
                     )
 //                    val mediaList = arrayListOf<Int>()
 //                    mediaList.add(R.drawable.broken_image)

@@ -1,5 +1,6 @@
 package com.example.isosta.ui.screens
 
+import android.content.Intent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -63,7 +64,6 @@ fun PostScreen(
         is IsostaPostUiState.Success -> PostColumn(
             isostaPost = isostaPostUiState.isostaPost, modifier = modifier
         )
-        //is IsostaUiState.Success -> TextMessageScreen(text = isostaUiState.thumbnailPhotos, modifier = modifier.fillMaxWidth())
         is IsostaPostUiState.Error -> TextMessageScreen(text = "There was a error loading the post", modifier = modifier.fillMaxSize())
     }
 }
@@ -71,12 +71,6 @@ fun PostScreen(
 @Composable
 fun PostColumn(
     isostaPost: IsostaPost,
-//    profilePicture: Int,
-//    profileName: String,
-//    profileHandle: String,
-//    postDescription: String,
-//    mediaList: List<Int>,
-//    commentList: List<IsostaComment>,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -84,11 +78,7 @@ fun PostColumn(
     ) {
         item {
             PostCard(
-                profilePicture = isostaPost.poster.profilePicture,
-                profileName = isostaPost.poster.profileName,
-                profileHandle = isostaPost.poster.profileHandle,
-                postDescription = isostaPost.postDescription,
-                mediaList = isostaPost.mediaList
+                isostaPost = isostaPost
             )
         }
         item {
@@ -105,17 +95,11 @@ fun PostColumn(
     }
 }
 
-
-
 // The entire card composable containing the post images, description, author information, etc
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PostCard(
-    profilePicture: String,
-    profileName: String,
-    profileHandle: String,
-    postDescription: String,
-    mediaList: List<PostMedia>,
+    isostaPost: IsostaPost,
     modifier: Modifier = Modifier
 ) {
     val haptics = LocalHapticFeedback.current
@@ -123,21 +107,20 @@ fun PostCard(
     Card(modifier = modifier) {
         Column {
             AuthorInformation(
-                profilePicture = profilePicture,
-                profileName = profileName,
-                profileHandle = profileHandle,
+                poster = isostaPost.poster,
+                postLink = isostaPost.postLink,
                 onClick = {/* TODO: Create onClick */}
             )
-            MediaPager(mediaList)
+            MediaPager(isostaPost.mediaList)
             Text(
                 // Description text
-                text = postDescription,
+                text = isostaPost.postDescription,
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier.padding(16.dp).combinedClickable(
                     onClick = {},
                     onLongClick = {
                         haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                        clipboardManager.setText(AnnotatedString(postDescription))
+                        clipboardManager.setText(AnnotatedString(isostaPost.postDescription))
                     }
                 )
             )
@@ -148,10 +131,9 @@ fun PostCard(
 // Top author information with profile picture.
 @Composable
 fun AuthorInformation(
-    profilePicture: String,
-    profileName: String,
-    profileHandle: String,
+    poster: IsostaUser,
     onClick: () -> Unit,
+    postLink: String,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -170,7 +152,7 @@ fun AuthorInformation(
 //            )
             AsyncImage(
                 model = ImageRequest.Builder(context = LocalContext.current)
-                    .data(profilePicture)
+                    .data(poster.profilePicture)
                     .crossfade(true)
                     .setHeader("User-Agent", "Mozilla/5.0")
                     .build(),
@@ -188,11 +170,11 @@ fun AuthorInformation(
         ) {
             Column(modifier = Modifier.padding(10.dp)) {
                 Text(
-                    text = profileName,
+                    text = poster.profileName,
                     style = MaterialTheme.typography.headlineLarge,
                 )
                 Text(
-                    text = profileHandle,
+                    text = poster.profileHandle,
                     style = MaterialTheme.typography.bodySmall,
                 )
             }
@@ -206,7 +188,9 @@ fun AuthorInformation(
                 contentDescription = "Share icon",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize().clickable(
-                    onClick = {/* TODO: Share intent for post link */}
+                    onClick = {
+                        /* TODO: Share intent for post link */
+                    }
                 )
             )
         }
@@ -354,12 +338,6 @@ fun CommentCard(
 @Preview
 @Composable
 fun PostScreenPreview() {
-//    val mediaList = arrayListOf<Int>()
-//    mediaList.add(R.drawable.broken_image)
-//    mediaList.add(R.drawable.hourglass_top)
-//    mediaList.add(R.drawable.ic_launcher_background)
-//    mediaList.add(R.drawable.ic_launcher_foreground)
-
     val picture = "https://avatars.githubusercontent.com/u/68360714?v=4"
     val commentList = arrayListOf<IsostaComment>()
     val mediaList = arrayListOf<PostMedia>()
@@ -377,7 +355,8 @@ fun PostScreenPreview() {
                 profileHandle = "@yui",
                 profileLink = "",
                 profileName = "Yui"),
-            postDescription = "YUI DESCRIPTION"
+            postDescription = "YUI DESCRIPTION",
+            postLink = ""
         )
     )
 }

@@ -135,7 +135,8 @@ open class IsostaApiService {
             commentList = commentList,
             mediaList = mediaList,
             poster = poster,
-            postDescription = postDescription
+            postDescription = postDescription,
+            postLink = url
         )
     }
 }

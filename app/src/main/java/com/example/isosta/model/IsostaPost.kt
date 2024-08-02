@@ -5,6 +5,7 @@ data class IsostaPost (
     val postDescription: String,
     val mediaList: List<PostMedia>,
     val commentList: List<IsostaComment>,
+    val postLink: String
 )
 
 
