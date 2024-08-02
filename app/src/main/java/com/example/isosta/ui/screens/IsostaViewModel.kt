@@ -22,7 +22,7 @@ import java.io.IOException
 // The mutable interface stores the status of the most recent web request
 sealed interface IsostaUiState {
     data class Success(val thumbnailPhotos: List<Thumbnail>) : IsostaUiState
-    object Error : IsostaUiState
+    data class Error(val errorString: String) : IsostaUiState
     object Loading : IsostaUiState
 }
 
@@ -72,8 +72,8 @@ class IsostaViewModel(
                         //IsostaUiState.Success("First Isosta image URL: ${result.picture}")
                         IsostaUiState.Success(result)
                 }
-            } catch (e:IOException) {
-                IsostaUiState.Error
+            } catch (e:Exception) {  // Previously IOException
+                isostaUiState = IsostaUiState.Error(e.toString())
                 println("LOG: There was an error fetching the website")
             }
         }
@@ -89,7 +89,7 @@ class IsostaViewModel(
                     isostaPostUiState =
                         IsostaPostUiState.Success(result)
                 }
-            } catch (e:IOException) {
+            } catch (e: Exception) {  // Previously IOException
                 isostaPostUiState = IsostaPostUiState.Error(e.toString())
                 println("LOG: There was an error fetching the post")
                 println("LOG: the error for fetching the post is " + e)

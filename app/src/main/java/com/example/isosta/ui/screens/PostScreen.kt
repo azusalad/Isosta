@@ -67,7 +67,7 @@ fun PostScreen(
             modifier = modifier
         )
         is IsostaPostUiState.Error -> TextMessageScreen(
-            text = "There was a error loading the post: " + isostaPostUiState.errorString,
+            text = "There was a error loading the post:\n\n" + isostaPostUiState.errorString,
             modifier = modifier.fillMaxSize())
     }
 }

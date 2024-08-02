@@ -44,7 +44,9 @@ fun HomeScreen(
             thumbnailList = isostaUiState.thumbnailPhotos, onThumbnailClicked = onThumbnailClicked, modifier = modifier.fillMaxWidth(), contentPadding = contentPadding,
         )
         //is IsostaUiState.Success -> TextMessageScreen(text = isostaUiState.thumbnailPhotos, modifier = modifier.fillMaxWidth())
-        is IsostaUiState.Error -> TextMessageScreen(text = "There was a error loading thumbnails", modifier = modifier.fillMaxSize())
+        is IsostaUiState.Error -> TextMessageScreen(
+            text = "There was a error loading thumbnails:\n\n" + isostaUiState.errorString,
+            modifier = modifier.fillMaxSize())
     }
 }
 
