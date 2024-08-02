@@ -1,5 +1,7 @@
 package com.example.isosta.ui
 
+import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -75,7 +77,9 @@ fun IsostaApp(
                     val context = LocalContext.current
                     PostScreen(
                         isostaPostUiState = isostaViewModel.isostaPostUiState,
-
+                        onShareButtonClicked = { postLink: String ->
+                            sharePost(context = context, postLink = postLink)
+                        }
                     )
 //                    val mediaList = arrayListOf<Int>()
 //                    mediaList.add(R.drawable.broken_image)
@@ -117,3 +121,15 @@ fun IsostaTopAppBar(scrollBehavior: TopAppBarScrollBehavior, modifier: Modifier 
     )
 }
 
+private fun sharePost(context: Context, postLink: String) {
+    val shareIntent: Intent = Intent(Intent.ACTION_SEND).apply {
+        type = "text/plain"
+        putExtra(Intent.EXTRA_TEXT, postLink)
+    }
+    context.startActivity(
+        Intent.createChooser(
+            shareIntent,
+            "Share this post"
+        )
+    )
+}

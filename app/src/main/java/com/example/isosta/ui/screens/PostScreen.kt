@@ -53,7 +53,7 @@ import com.example.isosta.model.Thumbnail
 @Composable
 fun PostScreen(
     isostaPostUiState: IsostaPostUiState,
-    //isostaPost: IsostaPost,
+    onShareButtonClicked: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     // Switch statement shows different things depending on the IsostaUiState
@@ -62,7 +62,9 @@ fun PostScreen(
             TextMessageScreen(text = "Loading post", modifier = modifier.fillMaxSize())
         }
         is IsostaPostUiState.Success -> PostColumn(
-            isostaPost = isostaPostUiState.isostaPost, modifier = modifier
+            isostaPost = isostaPostUiState.isostaPost,
+            onShareButtonClicked = onShareButtonClicked,
+            modifier = modifier
         )
         is IsostaPostUiState.Error -> TextMessageScreen(text = "There was a error loading the post", modifier = modifier.fillMaxSize())
     }
@@ -71,6 +73,7 @@ fun PostScreen(
 @Composable
 fun PostColumn(
     isostaPost: IsostaPost,
+    onShareButtonClicked: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -78,7 +81,8 @@ fun PostColumn(
     ) {
         item {
             PostCard(
-                isostaPost = isostaPost
+                isostaPost = isostaPost,
+                onShareButtonClicked = onShareButtonClicked
             )
         }
         item {
@@ -100,6 +104,7 @@ fun PostColumn(
 @Composable
 fun PostCard(
     isostaPost: IsostaPost,
+    onShareButtonClicked: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val haptics = LocalHapticFeedback.current
@@ -109,6 +114,7 @@ fun PostCard(
             AuthorInformation(
                 poster = isostaPost.poster,
                 postLink = isostaPost.postLink,
+                onShareButtonClicked = onShareButtonClicked,
                 onClick = {/* TODO: Create onClick */}
             )
             MediaPager(isostaPost.mediaList)
@@ -134,6 +140,7 @@ fun AuthorInformation(
     poster: IsostaUser,
     onClick: () -> Unit,
     postLink: String,
+    onShareButtonClicked: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -190,6 +197,7 @@ fun AuthorInformation(
                 modifier = Modifier.fillMaxSize().clickable(
                     onClick = {
                         /* TODO: Share intent for post link */
+                        onShareButtonClicked(postLink)
                     }
                 )
             )
@@ -242,7 +250,7 @@ fun MediaPager(
                 contentScale = ContentScale.Fit,
                 modifier = Modifier
                     .fillMaxSize().clickable(
-                        onClick = {/* TODO */}
+                        onClick = {/* TODO: Open ShareSheet for media */}
                     ),
             )
 
@@ -356,7 +364,8 @@ fun PostScreenPreview() {
                 profileLink = "",
                 profileName = "Yui"),
             postDescription = "YUI DESCRIPTION",
-            postLink = ""
-        )
+            postLink = "",
+        ),
+        onShareButtonClicked = {}
     )
 }
