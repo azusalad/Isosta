@@ -81,25 +81,6 @@ fun IsostaApp(
                             sharePost(context = context, postLink = postLink)
                         }
                     )
-//                    val mediaList = arrayListOf<Int>()
-//                    mediaList.add(R.drawable.broken_image)
-//                    mediaList.add(R.drawable.hourglass_top)
-//                    mediaList.add(R.drawable.ic_launcher_background)
-//                    mediaList.add(R.drawable.ic_launcher_foreground)
-//
-//                    val commentList = arrayListOf<IsostaComment>()
-//                    commentList.add(IsostaComment(R.drawable.broken_image, "Broken image", "Comment"))
-//                    commentList.add(IsostaComment(R.drawable.hourglass_top, "Hourglass", "Comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment comment commentv"))
-//                    commentList.add(IsostaComment(R.drawable.ic_launcher_background, "Launcher background", "Comment"))
-//                    PostScreen(
-//                        isostaUiState = isostaViewModel.isostaUiState,
-//                        profilePicture = R.drawable.ic_launcher_background,
-//                        profileName = "Profile Name",
-//                        profileHandle = "@profilehandle",
-//                        postDescription = "Post description",
-//                        mediaList = mediaList,
-//                        commentList = commentList,
-//                    )
                 }
             }
         }

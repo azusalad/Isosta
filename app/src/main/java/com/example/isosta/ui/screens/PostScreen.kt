@@ -79,12 +79,14 @@ fun PostColumn(
     LazyColumn(
         modifier = modifier.fillMaxSize()
     ) {
+        // PostCard with main Post content
         item {
             PostCard(
                 isostaPost = isostaPost,
                 onShareButtonClicked = onShareButtonClicked
             )
         }
+        // Comments title text
         item {
             Text(
                 text = "Comments",
@@ -92,6 +94,7 @@ fun PostColumn(
                 modifier = modifier.padding(10.dp)
             )
         }
+        // Comment section column list
         items(isostaPost.commentList) { commentInformation ->
             CommentCard(isostaComment = commentInformation)
             Spacer(modifier = Modifier.height(20.dp))
@@ -111,15 +114,17 @@ fun PostCard(
     val clipboardManager = LocalClipboardManager.current
     Card(modifier = modifier) {
         Column {
+            // Top Author bar
             AuthorInformation(
                 poster = isostaPost.poster,
                 postLink = isostaPost.postLink,
                 onShareButtonClicked = onShareButtonClicked,
                 onClick = {/* TODO: Create onClick */}
             )
+            // Horizontal pager for media.
             MediaPager(isostaPost.mediaList)
+            // Description text
             Text(
-                // Description text
                 text = isostaPost.postDescription,
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier.padding(16.dp).combinedClickable(
@@ -147,16 +152,10 @@ fun AuthorInformation(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier.fillMaxWidth().padding(5.dp).clickable(onClick = onClick)
     ) {
+        // Poster profile picture
         Box(
             modifier = Modifier.weight(1f)
         ) {
-//            Image(
-//                painter = painterResource(profilePicture),
-//                contentDescription = "Profile Picture",
-//                contentScale = ContentScale.Fit,
-//                modifier = Modifier
-//                    .clip(CircleShape)
-//            )
             AsyncImage(
                 model = ImageRequest.Builder(context = LocalContext.current)
                     .data(poster.profilePicture)
@@ -171,6 +170,7 @@ fun AuthorInformation(
                     .clip(CircleShape),
             )
         }
+        // Poster's name and handle
         Box(
             contentAlignment = Alignment.CenterStart,
             modifier = Modifier.weight(5f)
@@ -186,6 +186,7 @@ fun AuthorInformation(
                 )
             }
         }
+        // Share icon
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier.fillMaxSize().weight(1f)
@@ -214,7 +215,6 @@ fun MediaPager(
     mediaList: List<PostMedia>,
     modifier: Modifier = Modifier
 ) {
-    //val context = LocalContext.current
     // Show all the media in this post in a horizontal pager
     val pagerState = rememberPagerState(pageCount = {
         mediaList.size
@@ -229,14 +229,6 @@ fun MediaPager(
             modifier = Modifier.fillMaxSize()
         ) { page ->
             // Pager content
-//            Image(
-//                painter = painterResource(mediaList[page]),
-//                contentDescription = "BRUH",
-//                contentScale = ContentScale.Fit,
-//                modifier = Modifier.fillMaxSize().clickable(
-//                    onClick = {/* TODO */},
-//                )
-//            )
             print("LOG: the image src for this page is " + mediaList[page].mediaSrc)
             AsyncImage(
                 model = ImageRequest.Builder(context = LocalContext.current)
@@ -289,18 +281,6 @@ fun CommentCard(
     Card(modifier = modifier.fillMaxWidth()) {
         Row (modifier = modifier.padding(5.dp)) {
             // Profile Picture
-//            Image(
-//                painter = painterResource(isostaComment.profilePicture),
-//                contentDescription = "Profile Picture",
-//                contentScale = ContentScale.Crop,
-//                modifier = Modifier
-//                    .aspectRatio(1f/1f)
-//                    .clip(CircleShape)
-//                    .weight(1f)
-//                    .clickable(
-//                        onClick = {/* TODO: Open author page */}
-//                    )
-//            )
             AsyncImage(
                 model = ImageRequest.Builder(context = LocalContext.current)
                     .data(isostaComment.user.profilePicture)
