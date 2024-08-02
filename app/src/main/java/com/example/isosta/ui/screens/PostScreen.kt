@@ -51,6 +51,7 @@ import com.example.isosta.model.PostMedia
 fun PostScreen(
     isostaPostUiState: IsostaPostUiState,
     onShareButtonClicked: (String) -> Unit,
+    onUserButtonClicked: (IsostaUser) -> Unit,
     modifier: Modifier = Modifier
 ) {
     // Switch statement shows different things depending on the IsostaUiState
@@ -61,6 +62,7 @@ fun PostScreen(
         is IsostaPostUiState.Success -> PostColumn(
             isostaPost = isostaPostUiState.isostaPost,
             onShareButtonClicked = onShareButtonClicked,
+            onUserButtonClicked = onUserButtonClicked,
             modifier = modifier
         )
         is IsostaPostUiState.Error -> TextMessageScreen(
@@ -73,6 +75,7 @@ fun PostScreen(
 fun PostColumn(
     isostaPost: IsostaPost,
     onShareButtonClicked: (String) -> Unit,
+    onUserButtonClicked: (IsostaUser) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -82,7 +85,8 @@ fun PostColumn(
         item {
             PostCard(
                 isostaPost = isostaPost,
-                onShareButtonClicked = onShareButtonClicked
+                onShareButtonClicked = onShareButtonClicked,
+                onUserButtonClicked = onUserButtonClicked,
             )
         }
         // Comments title text
@@ -95,7 +99,10 @@ fun PostColumn(
         }
         // Comment section column list
         items(isostaPost.commentList) { commentInformation ->
-            CommentCard(isostaComment = commentInformation)
+            CommentCard(
+                isostaComment = commentInformation,
+                onUserButtonClicked = onUserButtonClicked
+            )
             Spacer(modifier = Modifier.height(20.dp))
         }
     }
@@ -107,6 +114,7 @@ fun PostColumn(
 fun PostCard(
     isostaPost: IsostaPost,
     onShareButtonClicked: (String) -> Unit,
+    onUserButtonClicked: (IsostaUser) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val haptics = LocalHapticFeedback.current
@@ -118,7 +126,7 @@ fun PostCard(
                 poster = isostaPost.poster,
                 postLink = isostaPost.postLink,
                 onShareButtonClicked = onShareButtonClicked,
-                onClick = {/* TODO: Create onClick */}
+                onClick = {onUserButtonClicked(isostaPost.poster)}
             )
             // Horizontal pager for media.
             MediaPager(isostaPost.mediaList)
@@ -196,7 +204,6 @@ fun AuthorInformation(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize().clickable(
                     onClick = {
-                        /* TODO: Share intent for post link */
                         onShareButtonClicked(postLink)
                     }
                 )
@@ -273,6 +280,7 @@ fun MediaPager(
 @Composable
 fun CommentCard(
     isostaComment: IsostaComment,
+    onUserButtonClicked: (IsostaUser) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val clipboardManager = LocalClipboardManager.current
@@ -295,7 +303,7 @@ fun CommentCard(
                     .clip(CircleShape)
                     .weight(1f)
                     .clickable(
-                        onClick = {/* TODO: Open author page */}
+                        onClick = {onUserButtonClicked(isostaComment.user)}
                     )
             )
             Column(modifier = Modifier.padding(10.dp).weight(5f)) {
@@ -304,7 +312,7 @@ fun CommentCard(
                     text = isostaComment.user.profileHandle,
                     style = MaterialTheme.typography.headlineSmall,
                     modifier = Modifier.clickable(
-                        onClick = {/* TODO: Open author page */}
+                        onClick = {onUserButtonClicked(isostaComment.user)}
                     )
                 )
                 Text(
@@ -345,6 +353,7 @@ fun PostScreenPreview() {
             postDescription = "YUI DESCRIPTION",
             postLink = "",
         ),
-        onShareButtonClicked = {}
+        onShareButtonClicked = {},
+        onUserButtonClicked = {}
     )
 }

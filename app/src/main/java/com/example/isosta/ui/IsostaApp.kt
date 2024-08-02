@@ -25,6 +25,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.isosta.R
 import com.example.isosta.model.IsostaComment
+import com.example.isosta.model.IsostaUser
 import com.example.isosta.ui.screens.PostScreen
 import com.example.isosta.ui.screens.PostScreenPreview
 
@@ -79,6 +80,9 @@ fun IsostaApp(
                         isostaPostUiState = isostaViewModel.isostaPostUiState,
                         onShareButtonClicked = { postLink: String ->
                             sharePost(context = context, postLink = postLink)
+                        },
+                        onUserButtonClicked = { user: IsostaUser ->
+                            /* TODO: Call a function to load the user's page */
                         }
                     )
                 }
