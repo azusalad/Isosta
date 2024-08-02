@@ -74,8 +74,14 @@ open class IsostaApiService {
             profileLink = posterProfileLink)
 
         // Get media information
-        val allMediaInfo = doc.getElementsByClass("swiper-wrapper")[0]
-            .getElementsByTag("img")
+        // There might only be one media
+        var allMediaInfo = doc.getElementsByClass("swiper-wrapper")
+        if (allMediaInfo.size > 0) {
+            allMediaInfo = allMediaInfo[0].getElementsByTag("img")
+        }
+        else {
+            allMediaInfo = doc.getElementsByClass("media-wrap")[0].getElementsByTag("img")
+        }
         println("INFO: allMediaInfo = " + allMediaInfo)
         for (i in allMediaInfo) {
             var imageSrc = i.getElementsByTag("img").attr("src")
@@ -96,7 +102,15 @@ open class IsostaApiService {
         }
 
         // Get description
-        val postDescription = doc.getElementsByClass("desc")[0].text()
+        // Description might not exist
+        val postDescriptionInfo = doc.getElementsByClass("desc")
+        val postDescription: String
+        if (postDescriptionInfo.size > 0) {
+            postDescription = postDescriptionInfo[0].text()
+        }
+        else {
+            postDescription = ""
+        }
         println("LOG: postDescription = " + postDescription)
 
         // Get comments
