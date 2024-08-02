@@ -1,6 +1,5 @@
 package com.example.isosta.ui.screens
 
-import android.content.Intent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -17,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
@@ -47,7 +45,6 @@ import com.example.isosta.model.IsostaComment
 import com.example.isosta.model.IsostaPost
 import com.example.isosta.model.IsostaUser
 import com.example.isosta.model.PostMedia
-import com.example.isosta.model.Thumbnail
 
 // Show this screen when a ThumbnailCard is clicked.
 @Composable
@@ -66,7 +63,9 @@ fun PostScreen(
             onShareButtonClicked = onShareButtonClicked,
             modifier = modifier
         )
-        is IsostaPostUiState.Error -> TextMessageScreen(text = "There was a error loading the post", modifier = modifier.fillMaxSize())
+        is IsostaPostUiState.Error -> TextMessageScreen(
+            text = "There was a error loading the post: " + isostaPostUiState.errorString,
+            modifier = modifier.fillMaxSize())
     }
 }
 

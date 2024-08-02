@@ -12,7 +12,6 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.isosta.IsostaThumbnailsApplication
 import com.example.isosta.data.IsostaPostRepository
 import com.example.isosta.data.IsostaThumbnailsRepository
-import com.example.isosta.data.NetworkIsostaThumbnailsRepository
 import com.example.isosta.model.IsostaPost
 import com.example.isosta.model.Thumbnail
 import kotlinx.coroutines.Dispatchers
@@ -29,7 +28,7 @@ sealed interface IsostaUiState {
 
 sealed interface IsostaPostUiState {
     data class Success(val isostaPost: IsostaPost) : IsostaPostUiState
-    object Error : IsostaPostUiState
+    data class Error(val errorString: String) : IsostaPostUiState
     object Loading : IsostaPostUiState
 }
 
@@ -91,7 +90,7 @@ class IsostaViewModel(
                         IsostaPostUiState.Success(result)
                 }
             } catch (e:IOException) {
-                IsostaPostUiState.Error
+                isostaPostUiState = IsostaPostUiState.Error(e.toString())
                 println("LOG: There was an error fetching the post")
                 println("LOG: the error for fetching the post is " + e)
             }
