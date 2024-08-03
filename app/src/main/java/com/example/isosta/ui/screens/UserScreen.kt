@@ -59,9 +59,9 @@ fun UserScreen(
 @Composable
 fun UserColumn(
     user: IsostaUser,
-    postCount: Int,
-    followerCount: Int,
-    followingCount: Int,
+    postCount: String,
+    followerCount: String,
+    followingCount: String,
     thumbnailList: List<Thumbnail>,
     modifier: Modifier = Modifier
 ) {
@@ -93,9 +93,9 @@ fun UserColumn(
 @Composable
 fun UserBio(
     user: IsostaUser,
-    postCount: Int,
-    followerCount: Int,
-    followingCount: Int,
+    postCount: String,
+    followerCount: String,
+    followingCount: String,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -134,9 +134,9 @@ fun UserBio(
             horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier.fillMaxWidth().padding(8.dp)
         ) {
-            StatText(topText = postCount.toString(), bottomText = "posts")
-            StatText(topText = followerCount.toString(), bottomText = "followers")
-            StatText(topText = followingCount.toString(), bottomText = "following")
+            StatText(topText = postCount, bottomText = "posts")
+            StatText(topText = followerCount, bottomText = "followers")
+            StatText(topText = followingCount, bottomText = "following")
         }
     }
 }
@@ -172,9 +172,9 @@ fun UserBioPreview() {
             profileName = "Kita Ikuyo",
             profilePicture = "https://avatars.githubusercontent.com/u/68360714?v=4",
             ),
-        followerCount = 123,
-        followingCount = 456,
-        postCount = 789
+        followerCount = "123k",
+        followingCount = "456",
+        postCount = "789"
     )
 }
 
@@ -194,9 +194,9 @@ fun UserColumnPreview() {
             profileName = "Kita Ikuyo",
             profilePicture = yui,
         ),
-        followerCount = 123,
-        followingCount = 456,
-        postCount = 789,
+        followerCount = "123",
+        followingCount = "456k",
+        postCount = "789",
         thumbnailList = thumbnailList
     )
 }

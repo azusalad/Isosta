@@ -37,9 +37,9 @@ sealed interface IsostaUserUiState {
     data class Success(
         val thumbnailList: List<Thumbnail>,
         val user: IsostaUser,
-        val postCount: Int,
-        val followerCount: Int,
-        val followingCount: Int
+        val postCount: String,
+        val followerCount: String,
+        val followingCount: String
     ) : IsostaUserUiState
     data class Error(val errorString: String) : IsostaUserUiState
     object Loading : IsostaUserUiState

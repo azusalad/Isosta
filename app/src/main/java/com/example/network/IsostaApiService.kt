@@ -42,6 +42,52 @@ open class IsostaApiService {
         return thumbnailList
     }
 
+    open suspend fun getUserInfo(url: String = "https://imginn.com/suisei.daily.post/"): IsostaUser {
+        // Same as getThumbnailPhotos
+        // TODO: Do something about these two functions like merge them
+        val hostName = "https://imginn.com"
+        val thumbnailList = arrayListOf<Thumbnail>()
+        val doc = Jsoup.connect(url).userAgent("Mozilla").get()
+        val allInfo = doc.getElementsByClass("item")
+        for (i in allInfo) {
+            val imageSrc = i.getElementsByTag("img").attr("src")
+            val imageText = i.getElementsByTag("img").attr("alt").split(".")[0]
+            val postLink = hostName + i.getElementsByTag("a").attr("href")
+            if (imageSrc[0] == 'h') {
+                println("LOG: the imagesrc is: $imageSrc")
+                val newThumbnail = Thumbnail(picture = imageSrc, text = imageText, postLink = postLink)
+                thumbnailList.add(newThumbnail)
+            }
+        }
+
+        // Get user information
+        // The index at which these stats show on the website
+        val postCountIndex = 0
+        val followerCountIndex = 1
+        val followingCountIndex = 2
+
+        val userInfo = doc.getElementsByClass("userinfo")[0]
+        val profilePicture = userInfo.getElementsByTag("img")[0].attr("src")
+        val profileName = userInfo.getElementsByTag("h1")[0].text()
+        val profileHandle = userInfo.getElementsByTag("h2")[0].text()
+        val profileDescription = userInfo.getElementsByClass("bio")[0].text()
+        val statsInfo = userInfo.getElementsByClass("num")
+        val postCount = statsInfo[postCountIndex].text()
+        val followerCount = statsInfo[followerCountIndex].text()
+        val followingCount = statsInfo[followingCountIndex].text()
+
+        return IsostaUser(
+            profilePicture = profilePicture,
+            profileName = profileName,
+            profileHandle = profileHandle,
+            profileLink = url,
+            profileDescription = profileDescription,
+            postCount = postCount,
+            followerCount = followerCount,
+            followingCount = followingCount
+        )
+    }
+
     // Get the post information
     open suspend fun getPostInfo(url: String = "https://imginn.com/p/C-DJ4Z0hSjy"): IsostaPost {
         println("LOG: getPostInfo() called")
