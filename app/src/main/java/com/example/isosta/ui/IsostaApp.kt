@@ -30,13 +30,16 @@ import com.example.isosta.model.IsostaComment
 import com.example.isosta.model.IsostaUser
 import com.example.isosta.ui.screens.PostScreen
 import com.example.isosta.ui.screens.PostScreenPreview
+import com.example.isosta.ui.screens.UserColumnPreview
+import com.example.isosta.ui.screens.UserScreen
 
 // Contains composables that render what the user would see in the Isosta App
 
 // For the NavHost
 enum class IsostaScreen(val title: String) {
     Home(title = "Isosta Home Screen"),
-    Post(title = "Isosta Post Screen")
+    Post(title = "Isosta Post Screen"),
+    User(title = "Isosta User Screen")
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -89,8 +92,20 @@ fun IsostaApp(
                         },
                         onUserButtonClicked = { user: IsostaUser ->
                             /* TODO: Call a function to load the user's page */
+                            navController.navigate(IsostaScreen.User.name)
                         }
                     )
+                }
+                composable(route = IsostaScreen.User.name) {
+//                    UserScreen(
+//                        isostaUserUiState = isostaViewModel.isostaUserUiState,
+//                        onThumbnailClicked = { url: String ->
+//                            navController.navigate(IsostaScreen.Post.name)
+//                            println("LOG: getting post info for " + url)
+//                            isostaViewModel.getPostInfo(url)
+//                        }
+//                    )
+                    UserColumnPreview()
                 }
             }
         }
