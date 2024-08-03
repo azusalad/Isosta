@@ -1,5 +1,7 @@
 package com.example.isosta.ui.screens
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,6 +27,8 @@ import com.example.isosta.R
 import com.example.isosta.model.IsostaUser
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -45,7 +49,8 @@ fun UserScreen(
             TextMessageScreen(text = "Loading user", modifier = modifier.fillMaxSize())
         }
         is IsostaUserUiState.Success -> UserColumn(
-            user = isostaUserUiState.user
+            user = isostaUserUiState.user,
+            onThumbnailClicked = onThumbnailClicked
         )
         is IsostaUserUiState.Error -> TextMessageScreen(
             text = "There was a error loading the user:\n\n" + isostaUserUiState.errorString,
@@ -56,15 +61,13 @@ fun UserScreen(
 @Composable
 fun UserColumn(
     user: IsostaUser,
-//    postCount: String,
-//    followerCount: String,
-//    followingCount: String,
-//    thumbnailList: List<Thumbnail>,
+    onThumbnailClicked: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize()
     ) {
+        // User header
         item {
             UserBio(
                 user = user,
@@ -76,10 +79,11 @@ fun UserColumn(
                 modifier = Modifier.height(10.dp)
             )
         }
+        // Thumbnail lazy column
         items(user.thumbnailList) { thumbnail ->
             ThumbnailCard(
                 thumbnail = thumbnail,
-                onThumbnailClicked = {/* TODO: Implement this function */},
+                onThumbnailClicked = {onThumbnailClicked(thumbnail.postLink)},
                 modifier = Modifier.padding(8.dp)
             )
 
@@ -87,6 +91,7 @@ fun UserColumn(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun UserBio(
     user: IsostaUser,
@@ -95,6 +100,7 @@ fun UserBio(
     followingCount: String,
     modifier: Modifier = Modifier
 ) {
+    val clipboardManager = LocalClipboardManager.current
     Column(
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -118,17 +124,30 @@ fun UserBio(
         Text(
             text = user.profileName,
             style = MaterialTheme.typography.displayMedium,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            modifier = Modifier.combinedClickable(
+                onClick = {},
+                onLongClick = {
+                    clipboardManager.setText(AnnotatedString(user.profileName))
+                }
+            )
         )
         // User handle
         Text(
             text = user.profileHandle,
-            style = MaterialTheme.typography.titleLarge, 
-            textAlign = TextAlign.Center
+            style = MaterialTheme.typography.titleLarge,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.combinedClickable(
+                onClick = {},
+                onLongClick = {
+                    clipboardManager.setText(AnnotatedString(user.profileHandle))
+                }
+            )
         )
         Spacer(
             modifier = modifier.height(10.dp)
         )
+        // Bio stats
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier.fillMaxWidth().padding(8.dp)
@@ -161,21 +180,6 @@ fun StatText(
     }
 }
 
-@Preview
-@Composable
-fun UserBioPreview() {
-    UserBio(
-        user = IsostaUser(
-            profileHandle = "@kita",
-            profileLink = "",
-            profileName = "Kita Ikuyo",
-            profilePicture = "https://avatars.githubusercontent.com/u/68360714?v=4",
-            ),
-        followerCount = "123k",
-        followingCount = "456",
-        postCount = "789"
-    )
-}
 
 @Preview
 @Composable
@@ -198,5 +202,6 @@ fun UserColumnPreview() {
             postCount = "789",
             thumbnailList = thumbnailList
         ),
+        onThumbnailClicked = {}
     )
 }
