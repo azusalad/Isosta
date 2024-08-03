@@ -13,6 +13,7 @@ import com.example.isosta.IsostaThumbnailsApplication
 import com.example.isosta.data.IsostaPostRepository
 import com.example.isosta.data.IsostaThumbnailsRepository
 import com.example.isosta.model.IsostaPost
+import com.example.isosta.model.IsostaUser
 import com.example.isosta.model.Thumbnail
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,6 +33,18 @@ sealed interface IsostaPostUiState {
     object Loading : IsostaPostUiState
 }
 
+sealed interface IsostaUserUiState {
+    data class Success(
+        val thumbnailList: List<Thumbnail>,
+        val user: IsostaUser,
+        val postCount: Int,
+        val followerCount: Int,
+        val followingCount: Int
+    ) : IsostaUserUiState
+    data class Error(val errorString: String) : IsostaUserUiState
+    object Loading : IsostaUserUiState
+}
+
 //data class PageState(
 //    var postLink: String,
 //    var userLink: String
@@ -46,6 +59,8 @@ class IsostaViewModel(
         private set
         // ^ private setter
     var isostaPostUiState: IsostaPostUiState by mutableStateOf(IsostaPostUiState.Loading)
+        private set
+    var isostaUserUiState: IsostaUserUiState by mutableStateOf(IsostaUserUiState.Loading)
         private set
 
 //    var pageState = PageState(postLink = "", userLink = "")
