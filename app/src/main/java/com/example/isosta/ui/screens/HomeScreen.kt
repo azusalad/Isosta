@@ -28,6 +28,7 @@ import coil.request.ImageRequest
 import com.example.isosta.R
 import com.example.isosta.model.Thumbnail
 import com.example.isosta.ui.components.TextMessageScreen
+import com.example.isosta.ui.components.ThumbnailList
 
 
 @Composable
@@ -49,63 +50,6 @@ fun HomeScreen(
             modifier = modifier.fillMaxSize())
     }
 }
-
-@Composable
-fun ThumbnailList(
-    thumbnailList: List<Thumbnail>,
-    onThumbnailClicked: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(0.dp)
-) {
-    LazyColumn(contentPadding = contentPadding, modifier = modifier) {
-        items(thumbnailList) { thumbnail ->
-            ThumbnailCard(
-                thumbnail = thumbnail,
-                onThumbnailClicked = onThumbnailClicked,
-                modifier = Modifier.padding(8.dp)
-            )
-        }
-    }
-}
-
-@Composable
-fun ThumbnailCard(
-    thumbnail: Thumbnail, onThumbnailClicked: (String) -> Unit, modifier: Modifier = Modifier
-) {
-    println("LOG: The current picture is: " + thumbnail.picture)
-    val picture = """
-        https://mars.jpl.nasa.gov/msl-raw-images/msss/01000/mcam/1000MR0044631300503690E01_DXXX.jpg
-        """
-    Card(
-        // User clicks on the thumbnail card.  Load full Isosta post on click.
-        onClick = {onThumbnailClicked(thumbnail.postLink)},
-        modifier = modifier
-    ) {
-        Column {
-            AsyncImage(
-                model = ImageRequest.Builder(context = LocalContext.current)
-                    .data(thumbnail.picture)
-                    //.data("https://mars.jpl.nasa.gov/msl-raw-images/msss/01000/mcam/1000MR0044631300503690E01_DXXX.jpg")
-                    .crossfade(true)
-                    .setHeader("User-Agent", "Mozilla/5.0")
-                    .build(),
-                error = painterResource(R.drawable.broken_image),
-                placeholder = painterResource(R.drawable.hourglass_top),
-                contentDescription = thumbnail.text,
-                modifier = Modifier
-                    //.height(194.dp)
-                    .fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
-            Text(
-                text = thumbnail.text,
-                modifier = Modifier.padding(8.dp),
-                style = MaterialTheme.typography.headlineSmall
-            )
-        }
-    }
-}
-
 
 //@Preview
 @Composable
