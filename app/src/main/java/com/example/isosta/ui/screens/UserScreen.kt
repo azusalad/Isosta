@@ -2,6 +2,12 @@ package com.example.isosta.ui.screens
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -15,13 +21,52 @@ import com.example.isosta.R
 import com.example.isosta.model.IsostaUser
 import androidx.compose.material3.Text
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.example.isosta.model.IsostaComment
+import com.example.isosta.model.Thumbnail
+import com.example.isosta.ui.components.ThumbnailCard
 
 @Composable
-fun userBio(
+fun UserColumn(
     user: IsostaUser,
     postCount: Int,
     followerCount: Int,
-    followingCount: Int
+    followingCount: Int,
+    thumbnailList: List<Thumbnail>,
+    modifier: Modifier = Modifier
+) {
+    LazyColumn(
+        modifier = modifier.fillMaxSize()
+    ) {
+        item {
+            UserBio(
+                user = user,
+                postCount = postCount,
+                followerCount = followerCount,
+                followingCount = followingCount
+            )
+            Spacer(
+                modifier = Modifier.height(10.dp)
+            )
+        }
+        items(thumbnailList) { thumbnail ->
+            ThumbnailCard(
+                thumbnail = thumbnail,
+                onThumbnailClicked = {/* TODO: Implement this function */},
+                modifier = Modifier.padding(8.dp)
+            )
+
+        }
+    }
+}
+
+@Composable
+fun UserBio(
+    user: IsostaUser,
+    postCount: Int,
+    followerCount: Int,
+    followingCount: Int,
+    modifier: Modifier = Modifier
 ) {
     Column {
         // Profile picture
@@ -56,8 +101,8 @@ fun userBio(
 
 @Preview
 @Composable
-fun userBioPreview() {
-    userBio(
+fun UserBioPreview() {
+    UserBio(
         user = IsostaUser(
             profileHandle = "@kita",
             profileLink = "",
@@ -67,5 +112,28 @@ fun userBioPreview() {
         followerCount = 123,
         followingCount = 456,
         postCount = 789
+    )
+}
+
+@Preview
+@Composable
+fun UserColumnPreview() {
+    val yui = "https://avatars.githubusercontent.com/u/68360714?v=4"
+    val thumbnailList = arrayListOf<Thumbnail>()
+
+    thumbnailList.add(Thumbnail(picture = yui, postLink = "", text = "description 1"))
+    thumbnailList.add(Thumbnail(picture = yui, postLink = "", text = "description description description description description description description description description description description description description description "))
+
+    UserColumn(
+        user = IsostaUser(
+            profileHandle = "@kita",
+            profileLink = "",
+            profileName = "Kita Ikuyo",
+            profilePicture = yui,
+        ),
+        followerCount = 123,
+        followingCount = 456,
+        postCount = 789,
+        thumbnailList = thumbnailList
     )
 }
