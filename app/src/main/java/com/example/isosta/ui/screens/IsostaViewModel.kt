@@ -12,13 +12,13 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.isosta.IsostaThumbnailsApplication
 import com.example.isosta.data.IsostaPostRepository
 import com.example.isosta.data.IsostaThumbnailsRepository
+import com.example.isosta.data.IsostaUserRepository
 import com.example.isosta.model.IsostaPost
 import com.example.isosta.model.IsostaUser
 import com.example.isosta.model.Thumbnail
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.IOException
 
 // The mutable interface stores the status of the most recent web request
 sealed interface IsostaUiState {
@@ -35,11 +35,7 @@ sealed interface IsostaPostUiState {
 
 sealed interface IsostaUserUiState {
     data class Success(
-        val thumbnailList: List<Thumbnail>,
-        val user: IsostaUser,
-        val postCount: String,
-        val followerCount: String,
-        val followingCount: String
+        val user: IsostaUser
     ) : IsostaUserUiState
     data class Error(val errorString: String) : IsostaUserUiState
     object Loading : IsostaUserUiState
@@ -52,7 +48,8 @@ sealed interface IsostaUserUiState {
 
 class IsostaViewModel(
     private val isostaThumbnailsRepository: IsostaThumbnailsRepository,
-    private val isostaPostRepository: IsostaPostRepository
+    private val isostaPostRepository: IsostaPostRepository,
+    private val isostaUserRepository: IsostaUserRepository
 ): ViewModel() {
     // Mutable state stores the status of the most recent request.  The initial state is loading.
     var isostaUiState: IsostaUiState by mutableStateOf(IsostaUiState.Loading)
@@ -111,7 +108,24 @@ class IsostaViewModel(
             }
         }
     }
-
+    
+    fun getUserInfo(url: String) {
+        viewModelScope.launch {
+            isostaUserUiState = IsostaUserUiState.Loading
+            try {
+                println("LOG: Attempting to fetch User")
+                withContext(Dispatchers.IO) {
+                    val result = isostaUserRepository.getUserInfo(url)
+                    isostaUserUiState =
+                        IsostaUserUiState.Success(result)
+                }
+            } catch (e: Exception) {  // Previously IOException
+                isostaUserUiState = IsostaUserUiState.Error(e.toString())
+                println("LOG: There was an error fetching the User")
+                println("LOG: the error for fetching the User is " + e)
+            }
+        }
+    }
     // The viewmodel does not allow arguments to be passed in when the viewmodel is created.
     // Use a factory instead to solve this issue.
     companion object {
@@ -120,7 +134,13 @@ class IsostaViewModel(
                 val application = (this[APPLICATION_KEY] as IsostaThumbnailsApplication)
                 val isostaThumbnailsRepository = application.container.isostaThumbnailsRepository
                 val isostaPostRepository = application.container.isostaPostRepository
-                IsostaViewModel(isostaThumbnailsRepository = isostaThumbnailsRepository, isostaPostRepository = isostaPostRepository)
+                val isostaUserRepository = application.container.isostaUserRepository
+
+                IsostaViewModel(
+                    isostaThumbnailsRepository = isostaThumbnailsRepository,
+                    isostaPostRepository = isostaPostRepository,
+                    isostaUserRepository = isostaUserRepository
+                )
             }
         }
     }

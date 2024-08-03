@@ -25,6 +25,7 @@ import com.example.isosta.R
 import com.example.isosta.model.IsostaUser
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.isosta.model.IsostaComment
@@ -41,14 +42,10 @@ fun UserScreen(
     // Switch statement shows different things depending on the IsostaUserUiState
     when (isostaUserUiState) {
         is IsostaUserUiState.Loading -> {
-            TextMessageScreen(text = "Loading post", modifier = modifier.fillMaxSize())
+            TextMessageScreen(text = "Loading user", modifier = modifier.fillMaxSize())
         }
         is IsostaUserUiState.Success -> UserColumn(
-            user = isostaUserUiState.user,
-            postCount = isostaUserUiState.postCount,
-            followerCount = isostaUserUiState.followerCount,
-            followingCount = isostaUserUiState.followingCount,
-            thumbnailList = isostaUserUiState.thumbnailList
+            user = isostaUserUiState.user
         )
         is IsostaUserUiState.Error -> TextMessageScreen(
             text = "There was a error loading the user:\n\n" + isostaUserUiState.errorString,
@@ -59,10 +56,10 @@ fun UserScreen(
 @Composable
 fun UserColumn(
     user: IsostaUser,
-    postCount: String,
-    followerCount: String,
-    followingCount: String,
-    thumbnailList: List<Thumbnail>,
+//    postCount: String,
+//    followerCount: String,
+//    followingCount: String,
+//    thumbnailList: List<Thumbnail>,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -71,15 +68,15 @@ fun UserColumn(
         item {
             UserBio(
                 user = user,
-                postCount = postCount,
-                followerCount = followerCount,
-                followingCount = followingCount
+                postCount = user.postCount,
+                followerCount = user.followerCount,
+                followingCount = user.followingCount
             )
             Spacer(
                 modifier = Modifier.height(10.dp)
             )
         }
-        items(thumbnailList) { thumbnail ->
+        items(user.thumbnailList) { thumbnail ->
             ThumbnailCard(
                 thumbnail = thumbnail,
                 onThumbnailClicked = {/* TODO: Implement this function */},
@@ -121,11 +118,13 @@ fun UserBio(
         Text(
             text = user.profileName,
             style = MaterialTheme.typography.displayMedium,
+            textAlign = TextAlign.Center
         )
         // User handle
         Text(
             text = user.profileHandle,
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleLarge, 
+            textAlign = TextAlign.Center
         )
         Spacer(
             modifier = modifier.height(10.dp)
@@ -193,10 +192,11 @@ fun UserColumnPreview() {
             profileLink = "",
             profileName = "Kita Ikuyo",
             profilePicture = yui,
+
+            followerCount = "123",
+            followingCount = "456k",
+            postCount = "789",
+            thumbnailList = thumbnailList
         ),
-        followerCount = "123",
-        followingCount = "456k",
-        postCount = "789",
-        thumbnailList = thumbnailList
     )
 }

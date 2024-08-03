@@ -84,7 +84,8 @@ open class IsostaApiService {
             profileDescription = profileDescription,
             postCount = postCount,
             followerCount = followerCount,
-            followingCount = followingCount
+            followingCount = followingCount,
+            thumbnailList = thumbnailList
         )
     }
 

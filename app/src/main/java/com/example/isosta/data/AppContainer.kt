@@ -6,6 +6,7 @@ import com.example.network.IsostaApiService
 interface AppContainer {
     val isostaThumbnailsRepository: IsostaThumbnailsRepository
     val isostaPostRepository: IsostaPostRepository
+    val isostaUserRepository: IsostaUserRepository
 }
 
 class DefaultAppContainer : AppContainer {
@@ -19,5 +20,8 @@ class DefaultAppContainer : AppContainer {
     }
     override val isostaPostRepository: IsostaPostRepository by lazy {
         NetworkIsostaPostRepository(isostaService)
+    }
+    override val isostaUserRepository: IsostaUserRepository by lazy {
+        NetworkIsostaUserRepository(isostaService)
     }
 }

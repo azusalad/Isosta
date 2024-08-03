@@ -93,19 +93,21 @@ fun IsostaApp(
                         onUserButtonClicked = { user: IsostaUser ->
                             /* TODO: Call a function to load the user's page */
                             navController.navigate(IsostaScreen.User.name)
+                            println("LOG: loading user page for " + user.profileLink)
+                            isostaViewModel.getUserInfo(user.profileLink)
                         }
                     )
                 }
                 composable(route = IsostaScreen.User.name) {
-//                    UserScreen(
-//                        isostaUserUiState = isostaViewModel.isostaUserUiState,
-//                        onThumbnailClicked = { url: String ->
-//                            navController.navigate(IsostaScreen.Post.name)
-//                            println("LOG: getting post info for " + url)
-//                            isostaViewModel.getPostInfo(url)
-//                        }
-//                    )
-                    UserColumnPreview()
+                    UserScreen(
+                        isostaUserUiState = isostaViewModel.isostaUserUiState,
+                        onThumbnailClicked = { url: String ->
+                            navController.navigate(IsostaScreen.Post.name)
+                            println("LOG: getting post info for " + url)
+                            isostaViewModel.getPostInfo(url)
+                        }
+                    )
+                    //UserColumnPreview()
                 }
             }
         }
