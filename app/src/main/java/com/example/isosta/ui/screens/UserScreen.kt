@@ -29,7 +29,32 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.isosta.model.IsostaComment
 import com.example.isosta.model.Thumbnail
+import com.example.isosta.ui.components.TextMessageScreen
 import com.example.isosta.ui.components.ThumbnailCard
+
+@Composable
+fun UserScreen(
+    isostaUserUiState: IsostaUserUiState,
+    onThumbnailClicked: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    // Switch statement shows different things depending on the IsostaUserUiState
+    when (isostaUserUiState) {
+        is IsostaUserUiState.Loading -> {
+            TextMessageScreen(text = "Loading post", modifier = modifier.fillMaxSize())
+        }
+        is IsostaUserUiState.Success -> UserColumn(
+            user = isostaUserUiState.user,
+            postCount = isostaUserUiState.postCount,
+            followerCount = isostaUserUiState.followerCount,
+            followingCount = isostaUserUiState.followingCount,
+            thumbnailList = isostaUserUiState.thumbnailList
+        )
+        is IsostaUserUiState.Error -> TextMessageScreen(
+            text = "There was a error loading the user:\n\n" + isostaUserUiState.errorString,
+            modifier = modifier.fillMaxSize())
+    }
+}
 
 @Composable
 fun UserColumn(
