@@ -10,7 +10,7 @@ class NetworkIsostaRepositoryTest {
     fun networkIsostaThumbnailsRepository_getThumbnailPhotos_verifyPhotoList() =
         // Need to call a suspend function from without a coroutine
         runTest {
-            val repository = io.github.azusalad.isosta.data.NetworkIsostaThumbnailsRepository(
+            val repository = NetworkIsostaThumbnailsRepository(
                 isostaApiService = FakeIsostaApiService()
             )
             assertEquals(FakeDataSource.thumbnailList, repository.getThumbnailPhotos())

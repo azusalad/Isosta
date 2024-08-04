@@ -5,14 +5,14 @@ import io.github.azusalad.isosta.model.Thumbnail
 import io.github.azusalad.network.IsostaApiService
 
 interface IsostaThumbnailsRepository {
-    suspend fun getThumbnailPhotos(): List<io.github.azusalad.isosta.model.Thumbnail>
+    suspend fun getThumbnailPhotos(): List<Thumbnail>
 }
 
 class NetworkIsostaThumbnailsRepository(
     // Dependency injection for what service to use
     private val isostaApiService: IsostaApiService
-) : io.github.azusalad.isosta.data.IsostaThumbnailsRepository {
-    override suspend fun getThumbnailPhotos(): List<io.github.azusalad.isosta.model.Thumbnail> {
+) : IsostaThumbnailsRepository {
+    override suspend fun getThumbnailPhotos(): List<Thumbnail> {
         //return IsostaApi.IsostaService.getThumbnailPhotos()
         return isostaApiService.getThumbnailPhotos()
     }

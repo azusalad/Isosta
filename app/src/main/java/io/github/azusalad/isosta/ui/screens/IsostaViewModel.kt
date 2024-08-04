@@ -22,20 +22,20 @@ import kotlinx.coroutines.withContext
 
 // The mutable interface stores the status of the most recent web request
 sealed interface IsostaUiState {
-    data class Success(val thumbnailPhotos: List<io.github.azusalad.isosta.model.Thumbnail>) : IsostaUiState
+    data class Success(val thumbnailPhotos: List<Thumbnail>) : IsostaUiState
     data class Error(val errorString: String) : IsostaUiState
     object Loading : IsostaUiState
 }
 
 sealed interface IsostaPostUiState {
-    data class Success(val isostaPost: io.github.azusalad.isosta.model.IsostaPost) : IsostaPostUiState
+    data class Success(val isostaPost: IsostaPost) : IsostaPostUiState
     data class Error(val errorString: String) : IsostaPostUiState
     object Loading : IsostaPostUiState
 }
 
 sealed interface IsostaUserUiState {
     data class Success(
-        val user: io.github.azusalad.isosta.model.IsostaUser
+        val user: IsostaUser
     ) : IsostaUserUiState
     data class Error(val errorString: String) : IsostaUserUiState
     object Loading : IsostaUserUiState
@@ -47,9 +47,9 @@ sealed interface IsostaUserUiState {
 //)
 
 class IsostaViewModel(
-    private val isostaThumbnailsRepository: io.github.azusalad.isosta.data.IsostaThumbnailsRepository,
-    private val isostaPostRepository: io.github.azusalad.isosta.data.IsostaPostRepository,
-    private val isostaUserRepository: io.github.azusalad.isosta.data.IsostaUserRepository
+    private val isostaThumbnailsRepository: IsostaThumbnailsRepository,
+    private val isostaPostRepository: IsostaPostRepository,
+    private val isostaUserRepository: IsostaUserRepository
 ): ViewModel() {
     // Mutable state stores the status of the most recent request.  The initial state is loading.
     var isostaUiState: IsostaUiState by mutableStateOf(IsostaUiState.Loading)
@@ -131,7 +131,7 @@ class IsostaViewModel(
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                val application = (this[APPLICATION_KEY] as io.github.azusalad.isosta.IsostaThumbnailsApplication)
+                val application = (this[APPLICATION_KEY] as IsostaThumbnailsApplication)
                 val isostaThumbnailsRepository = application.container.isostaThumbnailsRepository
                 val isostaPostRepository = application.container.isostaPostRepository
                 val isostaUserRepository = application.container.isostaUserRepository

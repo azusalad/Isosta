@@ -4,24 +4,24 @@ import io.github.azusalad.network.IsostaApiService
 
 // The app container contains dependencies that the app requires.
 interface AppContainer {
-    val isostaThumbnailsRepository: io.github.azusalad.isosta.data.IsostaThumbnailsRepository
-    val isostaPostRepository: io.github.azusalad.isosta.data.IsostaPostRepository
-    val isostaUserRepository: io.github.azusalad.isosta.data.IsostaUserRepository
+    val isostaThumbnailsRepository: IsostaThumbnailsRepository
+    val isostaPostRepository: IsostaPostRepository
+    val isostaUserRepository: IsostaUserRepository
 }
 
-class DefaultAppContainer : io.github.azusalad.isosta.data.AppContainer {
+class DefaultAppContainer : AppContainer {
 
     private val isostaService : IsostaApiService by lazy {
         IsostaApiService()
     }
 
-    override val isostaThumbnailsRepository: io.github.azusalad.isosta.data.IsostaThumbnailsRepository by lazy {
-        io.github.azusalad.isosta.data.NetworkIsostaThumbnailsRepository(isostaService)
+    override val isostaThumbnailsRepository: IsostaThumbnailsRepository by lazy {
+        NetworkIsostaThumbnailsRepository(isostaService)
     }
-    override val isostaPostRepository: io.github.azusalad.isosta.data.IsostaPostRepository by lazy {
-        io.github.azusalad.isosta.data.NetworkIsostaPostRepository(isostaService)
+    override val isostaPostRepository: IsostaPostRepository by lazy {
+        NetworkIsostaPostRepository(isostaService)
     }
-    override val isostaUserRepository: io.github.azusalad.isosta.data.IsostaUserRepository by lazy {
-        io.github.azusalad.isosta.data.NetworkIsostaUserRepository(isostaService)
+    override val isostaUserRepository: IsostaUserRepository by lazy {
+        NetworkIsostaUserRepository(isostaService)
     }
 }

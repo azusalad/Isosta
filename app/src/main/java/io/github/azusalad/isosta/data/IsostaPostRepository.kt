@@ -5,14 +5,14 @@ import io.github.azusalad.isosta.model.Thumbnail
 import io.github.azusalad.network.IsostaApiService
 
 interface IsostaPostRepository {
-    suspend fun getPostInfo(url: String): io.github.azusalad.isosta.model.IsostaPost
+    suspend fun getPostInfo(url: String): IsostaPost
 }
 
 class NetworkIsostaPostRepository(
     // Dependency injection for what service to use
     private val isostaApiService: IsostaApiService
-) : io.github.azusalad.isosta.data.IsostaPostRepository {
-    override suspend fun getPostInfo(url: String): io.github.azusalad.isosta.model.IsostaPost {
+) : IsostaPostRepository {
+    override suspend fun getPostInfo(url: String): IsostaPost {
         return isostaApiService.getPostInfo(url)
     }
 }

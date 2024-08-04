@@ -10,5 +10,5 @@ data class IsostaUser (
     val postCount: String = "",
     val followerCount: String = "",
     val followingCount: String = "",
-    val thumbnailList: List<io.github.azusalad.isosta.model.Thumbnail> = arrayListOf()
+    val thumbnailList: List<Thumbnail> = arrayListOf()
 )

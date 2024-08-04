@@ -65,7 +65,7 @@ fun UserScreen(
 
 @Composable
 fun UserColumn(
-    user: io.github.azusalad.isosta.model.IsostaUser,
+    user: IsostaUser,
     onThumbnailClicked: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -99,7 +99,7 @@ fun UserColumn(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun UserBio(
-    user: io.github.azusalad.isosta.model.IsostaUser,
+    user: IsostaUser,
     postCount: String,
     followerCount: String,
     followingCount: String,
@@ -208,17 +208,17 @@ fun StatText(
 @Composable
 fun UserColumnPreview() {
     val yui = "https://avatars.githubusercontent.com/u/68360714?v=4"
-    val thumbnailList = arrayListOf<io.github.azusalad.isosta.model.Thumbnail>()
+    val thumbnailList = arrayListOf<Thumbnail>()
 
     thumbnailList.add(
-        io.github.azusalad.isosta.model.Thumbnail(
+        Thumbnail(
             picture = yui,
             postLink = "",
             text = "description 1"
         )
     )
     thumbnailList.add(
-        io.github.azusalad.isosta.model.Thumbnail(
+        Thumbnail(
             picture = yui,
             postLink = "",
             text = "description description description description description description description description description description description description description description "
@@ -226,7 +226,7 @@ fun UserColumnPreview() {
     )
 
     UserColumn(
-        user = io.github.azusalad.isosta.model.IsostaUser(
+        user = IsostaUser(
             profileHandle = "@kita",
             profileLink = "",
             profileName = "Kita Ikuyo",

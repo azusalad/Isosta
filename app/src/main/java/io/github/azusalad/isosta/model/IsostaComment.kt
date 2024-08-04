@@ -1,6 +1,6 @@
 package io.github.azusalad.isosta.model
 
 data class IsostaComment(
-    val user: io.github.azusalad.isosta.model.IsostaUser,
+    val user: IsostaUser,
     val commentText: String
 )

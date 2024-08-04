@@ -53,7 +53,7 @@ fun TextMessageScreen(
 
 @Composable
 fun ThumbnailList(
-    thumbnailList: List<io.github.azusalad.isosta.model.Thumbnail>,
+    thumbnailList: List<Thumbnail>,
     onThumbnailClicked: (String) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
@@ -72,7 +72,7 @@ fun ThumbnailList(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ThumbnailCard(
-    thumbnail: io.github.azusalad.isosta.model.Thumbnail, onThumbnailClicked: (String) -> Unit, modifier: Modifier = Modifier
+    thumbnail: Thumbnail, onThumbnailClicked: (String) -> Unit, modifier: Modifier = Modifier
 ) {
     println("LOG: The current picture is: " + thumbnail.picture)
     val clipboardManager = LocalClipboardManager.current

@@ -52,7 +52,7 @@ import io.github.azusalad.isosta.ui.components.TextMessageScreen
 fun PostScreen(
     isostaPostUiState: IsostaPostUiState,
     onShareButtonClicked: (String) -> Unit,
-    onUserButtonClicked: (io.github.azusalad.isosta.model.IsostaUser) -> Unit,
+    onUserButtonClicked: (IsostaUser) -> Unit,
     modifier: Modifier = Modifier
 ) {
     // Switch statement shows different things depending on the IsostaUiState
@@ -74,9 +74,9 @@ fun PostScreen(
 
 @Composable
 fun PostColumn(
-    isostaPost: io.github.azusalad.isosta.model.IsostaPost,
+    isostaPost: IsostaPost,
     onShareButtonClicked: (String) -> Unit,
-    onUserButtonClicked: (io.github.azusalad.isosta.model.IsostaUser) -> Unit,
+    onUserButtonClicked: (IsostaUser) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -113,9 +113,9 @@ fun PostColumn(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PostCard(
-    isostaPost: io.github.azusalad.isosta.model.IsostaPost,
+    isostaPost: IsostaPost,
     onShareButtonClicked: (String) -> Unit,
-    onUserButtonClicked: (io.github.azusalad.isosta.model.IsostaUser) -> Unit,
+    onUserButtonClicked: (IsostaUser) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val haptics = LocalHapticFeedback.current
@@ -150,7 +150,7 @@ fun PostCard(
 // Top author information with profile picture.
 @Composable
 fun AuthorInformation(
-    poster: io.github.azusalad.isosta.model.IsostaUser,
+    poster: IsostaUser,
     onClick: () -> Unit,
     postLink: String,
     onShareButtonClicked: (String) -> Unit,
@@ -219,7 +219,7 @@ fun AuthorInformation(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MediaPager(
-    mediaList: List<io.github.azusalad.isosta.model.PostMedia>,
+    mediaList: List<PostMedia>,
     modifier: Modifier = Modifier
 ) {
     // Show all the media in this post in a horizontal pager
@@ -280,8 +280,8 @@ fun MediaPager(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CommentCard(
-    isostaComment: io.github.azusalad.isosta.model.IsostaComment,
-    onUserButtonClicked: (io.github.azusalad.isosta.model.IsostaUser) -> Unit,
+    isostaComment: IsostaComment,
+    onUserButtonClicked: (IsostaUser) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val clipboardManager = LocalClipboardManager.current
@@ -335,23 +335,23 @@ fun CommentCard(
 @Composable
 fun PostScreenPreview() {
     val picture = "https://avatars.githubusercontent.com/u/68360714?v=4"
-    val commentList = arrayListOf<io.github.azusalad.isosta.model.IsostaComment>()
-    val mediaList = arrayListOf<io.github.azusalad.isosta.model.PostMedia>()
+    val commentList = arrayListOf<IsostaComment>()
+    val mediaList = arrayListOf<PostMedia>()
     mediaList.add(
-        io.github.azusalad.isosta.model.PostMedia(
+        PostMedia(
             mediaSrc = picture,
             mediaText = "yui photo"
         )
     )
     mediaList.add(
-        io.github.azusalad.isosta.model.PostMedia(
+        PostMedia(
             mediaSrc = picture,
             mediaText = "yui photo2"
         )
     )
     commentList.add(
-        io.github.azusalad.isosta.model.IsostaComment(
-            user = io.github.azusalad.isosta.model.IsostaUser(
+        IsostaComment(
+            user = IsostaUser(
                 profilePicture = picture,
                 profileHandle = "@yui",
                 profileLink = "",
@@ -360,10 +360,10 @@ fun PostScreenPreview() {
         )
     )
     PostColumn(
-        isostaPost = io.github.azusalad.isosta.model.IsostaPost(
+        isostaPost = IsostaPost(
             commentList = commentList,
             mediaList = mediaList,
-            poster = io.github.azusalad.isosta.model.IsostaUser(
+            poster = IsostaUser(
                 profilePicture = picture,
                 profileHandle = "@yui",
                 profileLink = "",

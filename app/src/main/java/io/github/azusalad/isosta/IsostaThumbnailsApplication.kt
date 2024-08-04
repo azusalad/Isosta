@@ -9,10 +9,10 @@ class IsostaThumbnailsApplication : Application() {
 
     // Stores the default app container object.  lateinit because the container variable
     // will be initialized when onCreate() is called
-    lateinit var container: io.github.azusalad.isosta.data.AppContainer
+    lateinit var container: AppContainer
     override fun onCreate() {
         super.onCreate()
-        container = io.github.azusalad.isosta.data.DefaultAppContainer()
+        container = DefaultAppContainer()
     }
 
 }

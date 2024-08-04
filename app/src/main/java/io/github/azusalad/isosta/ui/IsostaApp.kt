@@ -90,7 +90,7 @@ fun IsostaApp(
                         onShareButtonClicked = { postLink: String ->
                             sharePost(context = context, postLink = postLink)
                         },
-                        onUserButtonClicked = { user: io.github.azusalad.isosta.model.IsostaUser ->
+                        onUserButtonClicked = { user: IsostaUser ->
                             /* TODO: Call a function to load the user's page */
                             navController.navigate(IsostaScreen.User.name)
                             println("LOG: loading user page for " + user.profileLink)

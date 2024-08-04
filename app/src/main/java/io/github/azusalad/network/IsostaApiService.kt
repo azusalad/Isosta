@@ -12,10 +12,10 @@ import org.jsoup.Jsoup
 // Needs to be open to override in the FakeIsostaApiService test.
 open class IsostaApiService {
         // Asynchronous function so internet call works in the background
-    open suspend fun getThumbnailPhotos(url: String = "https://imginn.com/suisei.daily.post/"): List<io.github.azusalad.isosta.model.Thumbnail> {
+    open suspend fun getThumbnailPhotos(url: String = "https://imginn.com/suisei.daily.post/"): List<Thumbnail> {
         val hostName = "https://imginn.com"
         // Initialize the list to add the thumbnails to
-        val thumbnailList = arrayListOf<io.github.azusalad.isosta.model.Thumbnail>()
+        val thumbnailList = arrayListOf<Thumbnail>()
         // Fetch the website with user agent so we don't get forbidden page
         val doc = Jsoup.connect(url).userAgent("Mozilla").get()
         // Load all items
@@ -35,7 +35,7 @@ open class IsostaApiService {
             // The src might be not be https source but instead //assets... so only take the https srcs
             if (imageSrc[0] == 'h') {
                 println("LOG: the imagesrc is: $imageSrc")
-                val newThumbnail = io.github.azusalad.isosta.model.Thumbnail(
+                val newThumbnail = Thumbnail(
                     picture = imageSrc,
                     text = imageText,
                     postLink = postLink
@@ -46,11 +46,11 @@ open class IsostaApiService {
         return thumbnailList
     }
 
-    open suspend fun getUserInfo(url: String = "https://imginn.com/suisei.daily.post/"): io.github.azusalad.isosta.model.IsostaUser {
+    open suspend fun getUserInfo(url: String = "https://imginn.com/suisei.daily.post/"): IsostaUser {
         // Same as getThumbnailPhotos
         // TODO: Do something about these two functions like merge them
         val hostName = "https://imginn.com"
-        val thumbnailList = arrayListOf<io.github.azusalad.isosta.model.Thumbnail>()
+        val thumbnailList = arrayListOf<Thumbnail>()
         val doc = Jsoup.connect(url).userAgent("Mozilla").get()
         val allInfo = doc.getElementsByClass("item")
         for (i in allInfo) {
@@ -59,7 +59,7 @@ open class IsostaApiService {
             val postLink = hostName + i.getElementsByTag("a").attr("href")
             if (imageSrc[0] == 'h') {
                 println("LOG: the imagesrc is: $imageSrc")
-                val newThumbnail = io.github.azusalad.isosta.model.Thumbnail(
+                val newThumbnail = Thumbnail(
                     picture = imageSrc,
                     text = imageText,
                     postLink = postLink
@@ -84,7 +84,7 @@ open class IsostaApiService {
         val followerCount = statsInfo[followerCountIndex].text()
         val followingCount = statsInfo[followingCountIndex].text()
 
-        return io.github.azusalad.isosta.model.IsostaUser(
+        return IsostaUser(
             profilePicture = profilePicture,
             profileName = profileName,
             profileHandle = profileHandle,
@@ -98,13 +98,13 @@ open class IsostaApiService {
     }
 
     // Get the post information
-    open suspend fun getPostInfo(url: String = "https://imginn.com/p/C-DJ4Z0hSjy"): io.github.azusalad.isosta.model.IsostaPost {
+    open suspend fun getPostInfo(url: String = "https://imginn.com/p/C-DJ4Z0hSjy"): IsostaPost {
         println("LOG: getPostInfo() called")
         val hostName = "https://imginn.com"
 
         // Initialize the media list to add pictures to
-        val mediaList = arrayListOf<io.github.azusalad.isosta.model.PostMedia>()
-        val commentList = arrayListOf<io.github.azusalad.isosta.model.IsostaComment>()
+        val mediaList = arrayListOf<PostMedia>()
+        val commentList = arrayListOf<IsostaComment>()
         // Fetch the website with user agent so we don't get forbidden page
         val doc = Jsoup.connect(url).userAgent("Mozilla").get()
         println("INFO: The doc of the post: " + doc)
@@ -122,7 +122,7 @@ open class IsostaApiService {
         println("LOG: posterProfilePicture = " + posterProfilePicture)
         val posterProfileLink = hostName + posterInfo.getElementsByTag("a")[0].attr("href")
         println("LOG: posterProfileLink = " + posterProfileLink)
-        val poster = io.github.azusalad.isosta.model.IsostaUser(
+        val poster = IsostaUser(
             profileName = posterProfileName,
             profileHandle = posterProfileHandle,
             profilePicture = posterProfilePicture,
@@ -154,7 +154,7 @@ open class IsostaApiService {
             val imageText = i.getElementsByTag("img").attr("alt")
             println("LOG: imageText = " + imageText)
             val newMedia =
-                io.github.azusalad.isosta.model.PostMedia(
+                PostMedia(
                     mediaSrc = imageSrc,
                     mediaText = imageText
                 )
@@ -190,9 +190,9 @@ open class IsostaApiService {
                 println("LOG: commentProfileHandle = " + commentProfileHandle)
                 val commentText = i.getElementsByClass("con")[0].getElementsByTag("p")[0].text()
                 println("LOG: commentText = " + commentText)
-                val newComment = io.github.azusalad.isosta.model.IsostaComment(
+                val newComment = IsostaComment(
                     commentText = commentText,
-                    user = io.github.azusalad.isosta.model.IsostaUser(
+                    user = IsostaUser(
                         profilePicture = commentProfilePicture,
                         profileLink = commentProfileLink,
                         profileHandle = commentProfileHandle,
@@ -205,7 +205,7 @@ open class IsostaApiService {
 
         // Combine all information and return
         println("LOG: getPostInfo() completed")
-        return io.github.azusalad.isosta.model.IsostaPost(
+        return IsostaPost(
             commentList = commentList,
             mediaList = mediaList,
             poster = poster,
