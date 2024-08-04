@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-            android:name=".IsostaThumbnailsApplication"
+            android:name="io.github.azusalad.isosta.IsostaThumbnailsApplication"
 
             android:allowBackup="true"
             android:dataExtractionRules="@xml/data_extraction_rules"
@@ -17,7 +17,7 @@
             android:theme="@style/Theme.Isosta"
             tools:targetApi="31">
         <activity
-                android:name=".MainActivity"
+                android:name="io.github.azusalad.isosta.MainActivity"
                 android:exported="true"
                 android:label="@string/app_name"
                 android:theme="@style/Theme.Isosta">

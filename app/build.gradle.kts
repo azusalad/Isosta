@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.isosta"
+    namespace = "io.github.azusalad.isosta"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.isosta"
+        applicationId = "io.github.azusalad.isosta"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
