@@ -1,8 +1,11 @@
 package com.example.isosta.ui.screens
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -27,6 +31,7 @@ import com.example.isosta.R
 import com.example.isosta.model.IsostaUser
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
@@ -155,6 +160,24 @@ fun UserBio(
             StatText(topText = postCount, bottomText = "posts")
             StatText(topText = followerCount, bottomText = "followers")
             StatText(topText = followingCount, bottomText = "following")
+        }
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .width(150.dp)
+                .height(50.dp)
+                .background(MaterialTheme.colorScheme.primary)  // TODO: use secondary for depressed state
+                .clickable(
+                    onClick = {/* TODO: Add button depressed state */}
+                )
+
+        ) {
+            Text(
+                text = "Follow ♡",  //  TODO: Add following ♥ when button depressed
+                style = MaterialTheme.typography.titleLarge,
+                textAlign = TextAlign.Center,
+                color = Color.White
+            )
         }
     }
 }
