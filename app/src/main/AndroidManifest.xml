@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-            android:name="io.github.azusalad.isosta.IsostaThumbnailsApplication"
+            android:name="io.github.azusalad.isosta.IsostaApplication"
 
             android:allowBackup="true"
             android:dataExtractionRules="@xml/data_extraction_rules"

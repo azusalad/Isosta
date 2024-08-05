@@ -5,7 +5,7 @@ import io.github.azusalad.isosta.data.AppContainer
 import io.github.azusalad.isosta.data.DefaultAppContainer
 
 // The application object is attached to the application container
-class IsostaThumbnailsApplication : Application() {
+class IsostaApplication : Application() {
 
     // Stores the default app container object.  lateinit because the container variable
     // will be initialized when onCreate() is called

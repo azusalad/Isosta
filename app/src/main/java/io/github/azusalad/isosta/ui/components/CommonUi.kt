@@ -16,9 +16,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
@@ -51,30 +53,13 @@ fun TextMessageScreen(
     }
 }
 
-@Composable
-fun ThumbnailList(
-    thumbnailList: List<Thumbnail>,
-    onThumbnailClicked: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(0.dp)
-) {
-    LazyColumn(contentPadding = contentPadding, modifier = modifier) {
-        items(thumbnailList) { thumbnail ->
-            ThumbnailCard(
-                thumbnail = thumbnail,
-                onThumbnailClicked = onThumbnailClicked,
-                modifier = Modifier.padding(8.dp)
-            )
-        }
-    }
-}
-
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ThumbnailCard(
     thumbnail: Thumbnail, onThumbnailClicked: (String) -> Unit, modifier: Modifier = Modifier
 ) {
     println("LOG: The current picture is: " + thumbnail.picture)
+    val haptics = LocalHapticFeedback.current
     val clipboardManager = LocalClipboardManager.current
     Card(
         // User clicks on the thumbnail card.  Load full Isosta post on click.
@@ -97,10 +82,11 @@ fun ThumbnailCard(
             )
             Text(
                 text = thumbnail.text,
-                style = MaterialTheme.typography.headlineSmall,
+                style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.padding(8.dp).combinedClickable(
                     onClick = {},
                     onLongClick = {
+                        haptics.performHapticFeedback(HapticFeedbackType.LongPress)
                         clipboardManager.setText(AnnotatedString(thumbnail.text))
                     }
                 )

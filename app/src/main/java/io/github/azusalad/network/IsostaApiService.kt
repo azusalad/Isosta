@@ -11,41 +11,6 @@ import org.jsoup.Jsoup
 
 // Needs to be open to override in the FakeIsostaApiService test.
 open class IsostaApiService {
-        // Asynchronous function so internet call works in the background
-    open suspend fun getThumbnailPhotos(url: String = "https://imginn.com/suisei.daily.post/"): List<Thumbnail> {
-        val hostName = "https://imginn.com"
-        // Initialize the list to add the thumbnails to
-        val thumbnailList = arrayListOf<Thumbnail>()
-        // Fetch the website with user agent so we don't get forbidden page
-        val doc = Jsoup.connect(url).userAgent("Mozilla").get()
-        // Load all items
-        val allInfo = doc.getElementsByClass("item")
-        // Print this to logcat to make sure its working
-        //println(allInfo)
-        println(doc)
-
-        for (i in allInfo) {
-            // Get all src url of images
-            val imageSrc = i.getElementsByTag("img").attr("src")
-            // Get the information text for the thumbnail.  Cut out the alt part that describes the picture.
-            // Like "May be an image containing text"
-            val imageText = i.getElementsByTag("img").attr("alt").split(".")[0]
-            // Get the post link
-            val postLink = hostName + i.getElementsByTag("a").attr("href")
-            // The src might be not be https source but instead //assets... so only take the https srcs
-            if (imageSrc[0] == 'h') {
-                println("LOG: the imagesrc is: $imageSrc")
-                val newThumbnail = Thumbnail(
-                    picture = imageSrc,
-                    text = imageText,
-                    postLink = postLink
-                )
-                thumbnailList.add(newThumbnail)
-            }
-        }
-        return thumbnailList
-    }
-
     open suspend fun getUserInfo(url: String = "https://imginn.com/suisei.daily.post/"): IsostaUser {
         // Same as getThumbnailPhotos
         // TODO: Do something about these two functions like merge them
@@ -55,7 +20,7 @@ open class IsostaApiService {
         val allInfo = doc.getElementsByClass("item")
         for (i in allInfo) {
             val imageSrc = i.getElementsByTag("img").attr("src")
-            val imageText = i.getElementsByTag("img").attr("alt").split(".")[0]
+            val imageText = i.getElementsByTag("img").attr("alt")
             val postLink = hostName + i.getElementsByTag("a").attr("href")
             if (imageSrc[0] == 'h') {
                 println("LOG: the imagesrc is: $imageSrc")
@@ -98,7 +63,7 @@ open class IsostaApiService {
     }
 
     // Get the post information
-    open suspend fun getPostInfo(url: String = "https://imginn.com/p/C-DJ4Z0hSjy"): IsostaPost {
+    open suspend fun getPostInfo(url: String): IsostaPost {
         println("LOG: getPostInfo() called")
         val hostName = "https://imginn.com"
 

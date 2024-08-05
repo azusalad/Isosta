@@ -9,9 +9,8 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import io.github.azusalad.isosta.IsostaThumbnailsApplication
+import io.github.azusalad.isosta.IsostaApplication
 import io.github.azusalad.isosta.data.IsostaPostRepository
-import io.github.azusalad.isosta.data.IsostaThumbnailsRepository
 import io.github.azusalad.isosta.data.IsostaUserRepository
 import io.github.azusalad.isosta.model.IsostaPost
 import io.github.azusalad.isosta.model.IsostaUser
@@ -21,10 +20,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 // The mutable interface stores the status of the most recent web request
-sealed interface IsostaUiState {
-    data class Success(val thumbnailPhotos: List<Thumbnail>) : IsostaUiState
-    data class Error(val errorString: String) : IsostaUiState
-    object Loading : IsostaUiState
+sealed interface IsostaHomeUiState {
+    data class Success(val thumbnailPhotos: List<Thumbnail>) : IsostaHomeUiState
+    data class Error(val errorString: String) : IsostaHomeUiState
+    object Loading : IsostaHomeUiState
 }
 
 sealed interface IsostaPostUiState {
@@ -41,18 +40,12 @@ sealed interface IsostaUserUiState {
     object Loading : IsostaUserUiState
 }
 
-//data class PageState(
-//    var postLink: String,
-//    var userLink: String
-//)
-
 class IsostaViewModel(
-    private val isostaThumbnailsRepository: IsostaThumbnailsRepository,
     private val isostaPostRepository: IsostaPostRepository,
     private val isostaUserRepository: IsostaUserRepository
 ): ViewModel() {
     // Mutable state stores the status of the most recent request.  The initial state is loading.
-    var isostaUiState: IsostaUiState by mutableStateOf(IsostaUiState.Loading)
+    var isostaHomeUiState: IsostaHomeUiState by mutableStateOf(IsostaHomeUiState.Loading)
         private set
         // ^ private setter
     var isostaPostUiState: IsostaPostUiState by mutableStateOf(IsostaPostUiState.Loading)
@@ -60,15 +53,13 @@ class IsostaViewModel(
     var isostaUserUiState: IsostaUserUiState by mutableStateOf(IsostaUserUiState.Loading)
         private set
 
-//    var pageState = PageState(postLink = "", userLink = "")
-
     init {
-        getThumbnailPhotos()
+        getThumbnailPhotos("https://imginn.com/suisei.daily.post/")  // TODO: Replace this placeholder
     }
 
-    fun getThumbnailPhotos() {
+    fun getThumbnailPhotos(url: String) {
         viewModelScope.launch {
-            isostaUiState = IsostaUiState.Loading
+            isostaHomeUiState = IsostaHomeUiState.Loading
             // Might not be able to connect to website so need a try catch here.
             try {
                 // The viewModelScope.launch launches on the main thread which leads to network
@@ -76,16 +67,12 @@ class IsostaViewModel(
                 println("LOG: Attempting to fetch website")
                 withContext(Dispatchers.IO) {
                     // Use the repository to get the thumbnail photos
-//                    val listResult = isostaThumbnailsRepository.getThumbnailPhotos()
-//                    isostaUiState =
-//                        IsostaUiState.Success("Success: ${listResult.size} thumbnails received")
-                    val result = isostaThumbnailsRepository.getThumbnailPhotos()
-                    isostaUiState =
-                        //IsostaUiState.Success("First Isosta image URL: ${result.picture}")
-                        IsostaUiState.Success(result)
+                    val result = isostaUserRepository.getUserInfo(url)
+                    isostaHomeUiState =
+                        IsostaHomeUiState.Success(result.thumbnailList)
                 }
             } catch (e:Exception) {  // Previously IOException
-                isostaUiState = IsostaUiState.Error(e.toString())
+                isostaHomeUiState = IsostaHomeUiState.Error(e.toString())
                 println("LOG: There was an error fetching the website")
             }
         }
@@ -131,13 +118,11 @@ class IsostaViewModel(
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                val application = (this[APPLICATION_KEY] as IsostaThumbnailsApplication)
-                val isostaThumbnailsRepository = application.container.isostaThumbnailsRepository
+                val application = (this[APPLICATION_KEY] as IsostaApplication)
                 val isostaPostRepository = application.container.isostaPostRepository
                 val isostaUserRepository = application.container.isostaUserRepository
 
                 IsostaViewModel(
-                    isostaThumbnailsRepository = isostaThumbnailsRepository,
                     isostaPostRepository = isostaPostRepository,
                     isostaUserRepository = isostaUserRepository
                 )

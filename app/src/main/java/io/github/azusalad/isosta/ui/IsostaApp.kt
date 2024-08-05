@@ -25,12 +25,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import io.github.azusalad.isosta.R
-import io.github.azusalad.isosta.model.IsostaComment
 import io.github.azusalad.isosta.model.IsostaUser
 import io.github.azusalad.isosta.ui.screens.PostScreen
-import io.github.azusalad.isosta.ui.screens.PostScreenPreview
-import io.github.azusalad.isosta.ui.screens.UserColumnPreview
 import io.github.azusalad.isosta.ui.screens.UserScreen
 
 // Contains composables that render what the user would see in the Isosta App
@@ -68,7 +64,7 @@ fun IsostaApp(
                 composable(route = IsostaScreen.Home.name) {
                     // The main home screen and feed
                     HomeScreen(
-                        isostaUiState = isostaViewModel.isostaUiState,
+                        isostaHomeUiState = isostaViewModel.isostaHomeUiState,
                         onThumbnailClicked = {
                             // it is the url to go to
                             //isostaViewModel.pageState.postLink = it

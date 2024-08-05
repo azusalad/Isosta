@@ -32,7 +32,9 @@ import io.github.azusalad.isosta.model.IsostaUser
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -105,6 +107,7 @@ fun UserBio(
     followingCount: String,
     modifier: Modifier = Modifier
 ) {
+    val haptics = LocalHapticFeedback.current
     val clipboardManager = LocalClipboardManager.current
     Column(
         verticalArrangement = Arrangement.SpaceBetween,
@@ -133,6 +136,7 @@ fun UserBio(
             modifier = Modifier.combinedClickable(
                 onClick = {},
                 onLongClick = {
+                    haptics.performHapticFeedback(HapticFeedbackType.LongPress)
                     clipboardManager.setText(AnnotatedString(user.profileName))
                 }
             )
@@ -145,6 +149,7 @@ fun UserBio(
             modifier = Modifier.combinedClickable(
                 onClick = {},
                 onLongClick = {
+                    haptics.performHapticFeedback(HapticFeedbackType.LongPress)
                     clipboardManager.setText(AnnotatedString(user.profileHandle))
                 }
             )

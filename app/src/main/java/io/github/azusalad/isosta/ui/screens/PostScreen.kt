@@ -284,6 +284,7 @@ fun CommentCard(
     onUserButtonClicked: (IsostaUser) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val haptics = LocalHapticFeedback.current
     val clipboardManager = LocalClipboardManager.current
     print("LOG: the profile picture for this comment is " + isostaComment.user.profilePicture)
     Card(modifier = modifier.fillMaxWidth()) {
@@ -322,6 +323,7 @@ fun CommentCard(
                     modifier = Modifier.combinedClickable(
                         onClick = {},
                         onLongClick = {
+                            haptics.performHapticFeedback(HapticFeedbackType.LongPress)
                             clipboardManager.setText(AnnotatedString(isostaComment.commentText))
                         }
                     )
