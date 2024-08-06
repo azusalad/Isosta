@@ -35,7 +35,8 @@ import io.github.azusalad.isosta.ui.screens.UserScreen
 enum class IsostaScreen(val title: String) {
     Home(title = "Isosta Home Screen"),
     Post(title = "Isosta Post Screen"),
-    User(title = "Isosta User Screen")
+    User(title = "Isosta User Screen"),
+    Search(title = "Isosta Search Screen")
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -76,6 +77,10 @@ fun IsostaApp(
                             navController.navigate(IsostaScreen.User.name)
                             println("LOG: loading user page for " + user.profileLink)
                             isostaViewModel.getUserInfo(user.profileLink)
+                        },
+                        onSearchButtonClicked = {
+                            navController.navigate(IsostaScreen.Search.name)
+                            println("LOG: Navigating to the search page")
                         }
                         // The content padding here is not needed anymore due to the padding being
                         // put on the NavHost
@@ -108,6 +113,9 @@ fun IsostaApp(
                         }
                     )
                     //UserColumnPreview()
+                }
+                composable(route = IsostaScreen.Search.name) {
+                    Text(text = "search screen")
                 }
             }
         }

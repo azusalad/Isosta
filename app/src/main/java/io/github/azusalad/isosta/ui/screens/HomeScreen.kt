@@ -3,6 +3,7 @@ package io.github.azusalad.isosta.ui.screens
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -17,7 +18,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
@@ -48,6 +54,7 @@ fun HomeScreen(
     isostaHomeUiState: IsostaHomeUiState,
     onThumbnailClicked: (String) -> Unit,
     onUserButtonClicked: (IsostaUser) -> Unit,
+    onSearchButtonClicked: () -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
@@ -79,6 +86,7 @@ fun HomeScreen(
             userList = userList,
             onThumbnailClicked = onThumbnailClicked,
             onUserButtonClicked = onUserButtonClicked,
+            onSearchButtonClicked = onSearchButtonClicked,
             modifier = modifier.fillMaxWidth(),
             contentPadding = contentPadding,
         )
@@ -96,6 +104,7 @@ fun HomePager(
     userList: List<IsostaUser>,
     onThumbnailClicked: (String) -> Unit,
     onUserButtonClicked: (IsostaUser) -> Unit,
+    onSearchButtonClicked: () -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
@@ -155,6 +164,21 @@ fun HomePager(
                 )
             }
         }
+    }
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        ExtendedFloatingActionButton(
+            onClick = onSearchButtonClicked,
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = "Search"
+                )
+            },
+            text = { Text(text = "Search") },
+            modifier = Modifier.padding(24.dp).align(Alignment.BottomEnd)
+        )
     }
 }
 
@@ -333,6 +357,7 @@ fun HomePagerPreview() {
         thumbnailList = thumbnailList,
         userList = userList,
         onThumbnailClicked = {},
-        onUserButtonClicked = {}
+        onUserButtonClicked = {},
+        onSearchButtonClicked = {}
     )
 }
