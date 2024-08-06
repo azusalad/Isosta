@@ -1,20 +1,26 @@
 package io.github.azusalad.isosta.ui.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
@@ -30,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import io.github.azusalad.isosta.R
+import io.github.azusalad.isosta.model.IsostaUser
 import io.github.azusalad.isosta.model.Thumbnail
 
 @Composable
@@ -91,6 +98,51 @@ fun ThumbnailCard(
                     }
                 )
             )
+        }
+    }
+}
+
+@Composable
+fun UserCard(
+    user: IsostaUser,
+    onUserButtonClicked: (IsostaUser) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(modifier = modifier.fillMaxWidth()) {
+        Row(
+            modifier = modifier
+                .padding(5.dp)
+                .clickable(
+                    onClick = { onUserButtonClicked(user) }
+                )
+        ) {
+            AsyncImage(
+                model = ImageRequest.Builder(context = LocalContext.current)
+                    .data(user.profilePicture)
+                    .crossfade(true)
+                    .setHeader("User-Agent", "Mozilla/5.0")
+                    .build(),
+                error = painterResource(R.drawable.broken_image),
+                placeholder = painterResource(R.drawable.hourglass_top),
+                contentDescription = "Comment profile picture",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .aspectRatio(1f / 1f)
+                    .clip(CircleShape)
+                    .weight(1f)
+            )
+            Column(modifier = Modifier
+                .padding(10.dp)
+                .weight(5f)) {
+                Text(
+                    text = user.profileName,
+                    style = MaterialTheme.typography.headlineLarge
+                )
+                Text(
+                    text = user.profileHandle,
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
         }
     }
 }

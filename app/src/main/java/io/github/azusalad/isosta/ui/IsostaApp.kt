@@ -27,6 +27,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import io.github.azusalad.isosta.model.IsostaUser
 import io.github.azusalad.isosta.ui.screens.PostScreen
+import io.github.azusalad.isosta.ui.screens.SearchScreenPreview
 import io.github.azusalad.isosta.ui.screens.UserScreen
 
 // Contains composables that render what the user would see in the Isosta App
@@ -115,7 +116,7 @@ fun IsostaApp(
                     //UserColumnPreview()
                 }
                 composable(route = IsostaScreen.Search.name) {
-                    Text(text = "search screen")
+                    SearchScreenPreview()
                 }
             }
         }
