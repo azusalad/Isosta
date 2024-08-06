@@ -11,12 +11,13 @@ import org.jsoup.Jsoup
 
 // Needs to be open to override in the FakeIsostaApiService test.
 open class IsostaApiService {
+    private val hostName = "https://imginn.com"
+
     open suspend fun getUserInfo(url: String = "https://imginn.com/suisei.daily.post/"): IsostaUser {
         // Same as getThumbnailPhotos
         // TODO: Do something about these two functions like merge them
-        val hostName = "https://imginn.com"
         val thumbnailList = arrayListOf<Thumbnail>()
-        val doc = Jsoup.connect(url).userAgent("Mozilla").get()
+        val doc = Jsoup.connect(url).userAgent("Mozilla/5.0").get()
         val allInfo = doc.getElementsByClass("item")
         for (i in allInfo) {
             val imageSrc = i.getElementsByTag("img").attr("src")
@@ -65,13 +66,12 @@ open class IsostaApiService {
     // Get the post information
     open suspend fun getPostInfo(url: String): IsostaPost {
         println("LOG: getPostInfo() called")
-        val hostName = "https://imginn.com"
 
         // Initialize the media list to add pictures to
         val mediaList = arrayListOf<PostMedia>()
         val commentList = arrayListOf<IsostaComment>()
         // Fetch the website with user agent so we don't get forbidden page
-        val doc = Jsoup.connect(url).userAgent("Mozilla").get()
+        val doc = Jsoup.connect(url).userAgent("Mozilla/5.0").get()
         println("INFO: The doc of the post: " + doc)
 
         // Get the poster's information
@@ -177,6 +177,47 @@ open class IsostaApiService {
             postDescription = postDescription,
             postLink = url
         )
+    }
+
+    // Search for a user
+    open suspend fun getSearchInfo(query: String): List<IsostaUser> {
+        val url = query.replace(" ","+")
+        val userList = arrayListOf<IsostaUser>()
+
+        val doc = Jsoup.connect(url).userAgent("Mozilla/5.0").get()
+        println("INFO: The doc of the post: " + doc)
+
+        val allUserInfo = doc.getElementsByClass("tab-item user-item")
+        for (user in allUserInfo) {
+            var profilePicture = user.getElementsByTag("img").attr("src")
+            // The first two images will have the link under the src attribute, however the
+            // other images will have a placeholder lazy image under the src attribute.
+            // The data-src attribute seems to have the correct link
+            if (profilePicture[0] != 'h') {
+                profilePicture = user.getElementsByTag("img").attr("data-src")
+            }
+            if (profilePicture == "") {
+                continue
+            }
+            println("LOG: profilePicture = " + profilePicture)
+
+            val profileName = user.getElementsByClass("fullname")[0].getElementsByTag("span").text()
+            println("LOG: profileName = " + profileName)
+            val profileHandle = user.getElementsByClass("username")[0].text()
+            println("LOG: profileHandle = " + profileHandle)
+            val profileLink = hostName + user.attr("href")
+            println("LOG: profileLink = " + profileLink)
+
+            userList.add(
+                IsostaUser(
+                    profilePicture = profilePicture,
+                    profileName = profileName,
+                    profileHandle = profileHandle,
+                    profileLink = profileLink
+                )
+            )
+        }
+        return userList
     }
 }
 
