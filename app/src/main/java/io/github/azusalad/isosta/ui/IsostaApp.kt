@@ -71,6 +71,11 @@ fun IsostaApp(
                             navController.navigate(IsostaScreen.Post.name)
                             println("LOG: getting post info for " + it)
                             isostaViewModel.getPostInfo(it)
+                        },
+                        onUserButtonClicked = { user: IsostaUser ->
+                            navController.navigate(IsostaScreen.User.name)
+                            println("LOG: loading user page for " + user.profileLink)
+                            isostaViewModel.getUserInfo(user.profileLink)
                         }
                         // The content padding here is not needed anymore due to the padding being
                         // put on the NavHost
@@ -87,7 +92,6 @@ fun IsostaApp(
                             sharePost(context = context, postLink = postLink)
                         },
                         onUserButtonClicked = { user: IsostaUser ->
-                            /* TODO: Call a function to load the user's page */
                             navController.navigate(IsostaScreen.User.name)
                             println("LOG: loading user page for " + user.profileLink)
                             isostaViewModel.getUserInfo(user.profileLink)

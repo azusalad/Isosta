@@ -47,6 +47,7 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     isostaHomeUiState: IsostaHomeUiState,
     onThumbnailClicked: (String) -> Unit,
+    onUserButtonClicked: (IsostaUser) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
@@ -58,7 +59,7 @@ fun HomeScreen(
             profilePicture = yui,
             profileName = "Yui",
             profileHandle = "@yui",
-            profileLink = "",
+            profileLink = "https://imginn.com/suisei.daily.post/",
         )
     )
     userList.add(
@@ -66,7 +67,7 @@ fun HomeScreen(
             profilePicture = yui,
             profileName = "Yui2",
             profileHandle = "@yui2",
-            profileLink = "",
+            profileLink = "https://imginn.com/suisei.daily.post/",
         )
     )
 
@@ -77,8 +78,9 @@ fun HomeScreen(
             thumbnailList = isostaHomeUiState.thumbnailPhotos,
             userList = userList,
             onThumbnailClicked = onThumbnailClicked,
+            onUserButtonClicked = onUserButtonClicked,
             modifier = modifier.fillMaxWidth(),
-            contentPadding = contentPadding
+            contentPadding = contentPadding,
         )
         //is IsostaUiState.Success -> TextMessageScreen(text = isostaUiState.thumbnailPhotos, modifier = modifier.fillMaxWidth())
         is IsostaHomeUiState.Error -> TextMessageScreen(
@@ -93,6 +95,7 @@ fun HomePager(
     thumbnailList: List<Thumbnail>,
     userList: List<IsostaUser>,
     onThumbnailClicked: (String) -> Unit,
+    onUserButtonClicked: (IsostaUser) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
@@ -147,7 +150,8 @@ fun HomePager(
             else {
                 // Second page is follow column
                 FollowList(
-                    userList = userList
+                    userList = userList,
+                    onUserButtonClicked = onUserButtonClicked
                 )
             }
         }
@@ -175,13 +179,15 @@ fun ThumbnailList(
 @Composable
 fun FollowList(
     userList: List<IsostaUser>,
+    onUserButtonClicked: (IsostaUser) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
     LazyColumn(contentPadding = contentPadding, modifier = modifier) {
         items(userList) { isostaUser ->
             UserCard(
-                user = isostaUser
+                user = isostaUser,
+                onUserButtonClicked = onUserButtonClicked
             )
             Spacer(modifier = Modifier.height(20.dp))
         }
@@ -191,10 +197,17 @@ fun FollowList(
 @Composable
 fun UserCard(
     user: IsostaUser,
+    onUserButtonClicked: (IsostaUser) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(modifier = modifier.fillMaxWidth()) {
-        Row(modifier = modifier.padding(5.dp)) {
+        Row(
+            modifier = modifier
+                .padding(5.dp)
+                .clickable(
+                    onClick = { onUserButtonClicked(user) }
+                )
+        ) {
             AsyncImage(
                 model = ImageRequest.Builder(context = LocalContext.current)
                     .data(user.profilePicture)
@@ -210,7 +223,9 @@ fun UserCard(
                     .clip(CircleShape)
                     .weight(1f)
             )
-            Column(modifier = Modifier.padding(10.dp).weight(5f)) {
+            Column(modifier = Modifier
+                .padding(10.dp)
+                .weight(5f)) {
                 Text(
                     text = user.profileName,
                     style = MaterialTheme.typography.headlineLarge
@@ -272,7 +287,8 @@ fun FollowListPreview() {
         )
     )
     FollowList(
-        userList = userList
+        userList = userList,
+        onUserButtonClicked = {}
     )
 }
 
@@ -316,6 +332,7 @@ fun HomePagerPreview() {
     HomePager(
         thumbnailList = thumbnailList,
         userList = userList,
-        onThumbnailClicked = {}
+        onThumbnailClicked = {},
+        onUserButtonClicked = {}
     )
 }
