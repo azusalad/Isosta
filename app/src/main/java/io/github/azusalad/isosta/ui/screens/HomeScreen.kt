@@ -290,13 +290,15 @@ fun HomeScreenPreview() {
         Thumbnail(
             picture = yui,
             postLink = "",
-            text = "description 1"
+            text = "description 1",
+            sourceUser = ""
         )
     )
     thumbnailList.add(
         Thumbnail(
             picture = yui,
             postLink = "",
+            sourceUser = "",
             text = "description description description description description description description description description description description description description description "
         )
     )
@@ -344,13 +346,15 @@ fun HomePagerPreview() {
         Thumbnail(
             picture = yui,
             postLink = "",
-            text = "description 1"
+            text = "description 1",
+            sourceUser = ""
         )
     )
     thumbnailList.add(
         Thumbnail(
             picture = yui,
             postLink = "",
+            sourceUser = "",
             text = "description description description description description description description description description description description description description description "
         )
     )

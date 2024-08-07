@@ -19,6 +19,23 @@ open class IsostaApiService {
         // Fetch the website with user agent so we don't get forbidden page
         val doc = Jsoup.connect(url).userAgent("Mozilla/5.0").get()
         println("INFO->IsostaApiService.kt: The doc is " + doc)
+
+        // Get user information
+        // The index at which these stats show on the website
+        val postCountIndex = 0
+        val followerCountIndex = 1
+        val followingCountIndex = 2
+
+        val userInfo = doc.getElementsByClass("userinfo")[0]
+        val profilePicture = userInfo.getElementsByTag("img")[0].attr("src")
+        val profileName = userInfo.getElementsByTag("h1")[0].text()
+        val profileHandle = userInfo.getElementsByTag("h2")[0].text()
+        val profileDescription = userInfo.getElementsByClass("bio")[0].text()
+        val statsInfo = userInfo.getElementsByClass("num")
+        val postCount = statsInfo[postCountIndex].text()
+        val followerCount = statsInfo[followerCountIndex].text()
+        val followingCount = statsInfo[followingCountIndex].text()
+
         // Load all items
         val allInfo = doc.getElementsByClass("item")
         println("INFO->IsostaApiService.kt: allInfo is " + allInfo)
@@ -42,28 +59,13 @@ open class IsostaApiService {
                 val newThumbnail = Thumbnail(
                     picture = imageSrc,
                     text = imageText,
-                    postLink = postLink
+                    postLink = postLink,
+                    sourceUser = profileHandle
                 )
                 thumbnailList.add(newThumbnail)
                 println("LOG->IsostaApiService.kt: Adding new thumbnail to list")
             }
         }
-
-        // Get user information
-        // The index at which these stats show on the website
-        val postCountIndex = 0
-        val followerCountIndex = 1
-        val followingCountIndex = 2
-
-        val userInfo = doc.getElementsByClass("userinfo")[0]
-        val profilePicture = userInfo.getElementsByTag("img")[0].attr("src")
-        val profileName = userInfo.getElementsByTag("h1")[0].text()
-        val profileHandle = userInfo.getElementsByTag("h2")[0].text()
-        val profileDescription = userInfo.getElementsByClass("bio")[0].text()
-        val statsInfo = userInfo.getElementsByClass("num")
-        val postCount = statsInfo[postCountIndex].text()
-        val followerCount = statsInfo[followerCountIndex].text()
-        val followingCount = statsInfo[followingCountIndex].text()
 
         return IsostaUser(
             profilePicture = profilePicture,
