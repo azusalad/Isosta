@@ -55,6 +55,18 @@ class IsostaViewModel(
 
     init {
         getThumbnailPhotos("https://imginn.com/suisei.daily.post/")  // TODO: Replace this placeholder
+
+        // Placeholder
+//        val yui = "https://avatars.githubusercontent.com/u/68360714?v=4"
+//        val thumbnailList = arrayListOf<Thumbnail>()
+//        thumbnailList.add(
+//            Thumbnail(
+//                picture = yui,
+//                postLink = "",
+//                text = "description 1"
+//            )
+//        )
+//        isostaHomeUiState = IsostaHomeUiState.Success(thumbnailList)
     }
 
     fun getThumbnailPhotos(url: String) {

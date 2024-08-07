@@ -14,15 +14,21 @@ open class IsostaApiService {
     private val hostName = "https://imginn.com"
 
     open suspend fun getUserInfo(url: String = "https://imginn.com/suisei.daily.post/"): IsostaUser {
-        // Same as getThumbnailPhotos
-        // TODO: Do something about these two functions like merge them
+        // Initialize the list to add the thumbnails to
         val thumbnailList = arrayListOf<Thumbnail>()
+        // Fetch the website with user agent so we don't get forbidden page
         val doc = Jsoup.connect(url).userAgent("Mozilla/5.0").get()
+        // Load all items
         val allInfo = doc.getElementsByClass("item")
         for (i in allInfo) {
+            // Get all src url of images
             val imageSrc = i.getElementsByTag("img").attr("src")
+            // Get the information text for the thumbnail.  Cut out the alt part that describes the picture.
+            // Like "May be an image containing text"
             val imageText = i.getElementsByTag("img").attr("alt")
+            // Get the post link
             val postLink = hostName + i.getElementsByTag("a").attr("href")
+            // The src might be not be https source but instead //assets... so only take the https srcs
             if (imageSrc[0] == 'h') {
                 println("LOG: the imagesrc is: $imageSrc")
                 val newThumbnail = Thumbnail(
