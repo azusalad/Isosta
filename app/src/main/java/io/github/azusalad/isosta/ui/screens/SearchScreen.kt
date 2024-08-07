@@ -47,17 +47,23 @@ fun SearchScreen(
             onKeyboardDone = onKeyboardDone,
             onUserButtonClicked = onUserButtonClicked
         )
-        is IsostaSearchUiState.Loading -> {
-            TextMessageScreen(text = "Searching", modifier = modifier.fillMaxSize())
-        }
+        is IsostaSearchUiState.Loading -> SearchColumn(
+            userList = arrayListOf<IsostaUser>(),
+            onKeyboardDone = onKeyboardDone,
+            onUserButtonClicked = onUserButtonClicked,
+            text = "Searching..."
+        )
         is IsostaSearchUiState.Success -> SearchColumn(
             userList = isostaSearchUiState.userList,
             onKeyboardDone = onKeyboardDone,
             onUserButtonClicked = onUserButtonClicked,
         )
-        is IsostaSearchUiState.Error -> TextMessageScreen(
-            text = "There was a error making the search:\n\n" + isostaSearchUiState.errorString,
-            modifier = modifier.fillMaxSize())
+        is IsostaSearchUiState.Error ->SearchColumn(
+            userList = arrayListOf<IsostaUser>(),
+            onKeyboardDone = onKeyboardDone,
+            onUserButtonClicked = onUserButtonClicked,
+            text = "There was a error making the search:\n\n" + isostaSearchUiState.errorString
+        )
     }
 }
 
@@ -66,6 +72,7 @@ fun SearchColumn(
     userList: List<IsostaUser>,
     onKeyboardDone: (String) -> Unit,
     onUserButtonClicked: (IsostaUser) -> Unit,
+    text: String = "",
     modifier: Modifier = Modifier
 ) {
     var query by rememberSaveable {mutableStateOf("")}
@@ -106,14 +113,19 @@ fun SearchColumn(
                 Icon(Icons.Default.Search, "Search Button")
             }
         }
-        LazyColumn(modifier = modifier) {
-            items(userList) { isostaUser ->
-                UserCard(
-                    user = isostaUser,
-                    onUserButtonClicked = onUserButtonClicked
-                )
-                Spacer(modifier = Modifier.height(10.dp))
+        if (text == "") {
+            LazyColumn(modifier = modifier) {
+                items(userList) { isostaUser ->
+                    UserCard(
+                        user = isostaUser,
+                        onUserButtonClicked = onUserButtonClicked
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                }
             }
+        }
+        else {
+            TextMessageScreen(text = text, modifier = Modifier.fillMaxSize())
         }
     }
 }
@@ -142,6 +154,7 @@ fun SearchScreenPreview() {
     SearchColumn(
         userList = userList,
         onKeyboardDone = {},
-        onUserButtonClicked = {}
+        onUserButtonClicked = {},
+        text = "Loading"
     )
 }
