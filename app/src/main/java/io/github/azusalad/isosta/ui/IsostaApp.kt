@@ -27,6 +27,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import io.github.azusalad.isosta.model.IsostaUser
 import io.github.azusalad.isosta.ui.screens.PostScreen
+import io.github.azusalad.isosta.ui.screens.SearchScreen
 import io.github.azusalad.isosta.ui.screens.SearchScreenPreview
 import io.github.azusalad.isosta.ui.screens.UserScreen
 
@@ -116,7 +117,19 @@ fun IsostaApp(
                     //UserColumnPreview()
                 }
                 composable(route = IsostaScreen.Search.name) {
-                    SearchScreenPreview()
+                    SearchScreen(
+                        isostaSearchUiState = isostaViewModel.isostaSearchUiState,
+                        onUserButtonClicked = { user: IsostaUser ->
+                            navController.navigate(IsostaScreen.User.name)
+                            println("LOG->IsostaApp.kt: loading user page for " + user.profileLink)
+                            isostaViewModel.getUserInfo(user.profileLink)
+                        },
+                        onKeyboardDone = { query: String ->
+                            println("LOG->IsostaApp.kt: Query made: " + query)
+                            isostaViewModel.getSearchInfo(query)
+                        }
+                    )
+                    //SearchScreenPreview()
                 }
             }
         }

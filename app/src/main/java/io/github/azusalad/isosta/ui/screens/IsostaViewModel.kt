@@ -40,6 +40,15 @@ sealed interface IsostaUserUiState {
     object Loading : IsostaUserUiState
 }
 
+sealed interface IsostaSearchUiState {
+    data class Success(
+        val userList: List<IsostaUser>
+    ) : IsostaSearchUiState
+    data class Error(val errorString: String) : IsostaSearchUiState
+    object Empty : IsostaSearchUiState
+    object Loading : IsostaSearchUiState
+}
+
 class IsostaViewModel(
     private val isostaPostRepository: IsostaPostRepository,
     private val isostaUserRepository: IsostaUserRepository
@@ -51,6 +60,8 @@ class IsostaViewModel(
     var isostaPostUiState: IsostaPostUiState by mutableStateOf(IsostaPostUiState.Loading)
         private set
     var isostaUserUiState: IsostaUserUiState by mutableStateOf(IsostaUserUiState.Loading)
+        private set
+    var isostaSearchUiState: IsostaSearchUiState by mutableStateOf(IsostaSearchUiState.Empty)
         private set
 
     init {
@@ -125,6 +136,25 @@ class IsostaViewModel(
             }
         }
     }
+
+    fun getSearchInfo(query: String) {
+        viewModelScope.launch {
+            isostaSearchUiState = IsostaSearchUiState.Loading
+            try {
+                println("LOG->IsostaViewModel.kt: Attempting to search with query: " + query)
+                withContext(Dispatchers.IO) {
+                    val result = isostaUserRepository.getSearchInfo(query)
+                    isostaSearchUiState =
+                        IsostaSearchUiState.Success(result)
+                }
+            } catch (e: Exception) {  // Previously IOException
+                isostaSearchUiState = IsostaSearchUiState.Error(e.toString())
+                println("LOG->IsostaViewModel.kt: There was an error searching with the query: " + query)
+                println("LOG->IsostaViewModel.kt: the error for making the query is " + e)
+            }
+        }
+    }
+
     // The viewmodel does not allow arguments to be passed in when the viewmodel is created.
     // Use a factory instead to solve this issue.
     companion object {

@@ -18,25 +18,34 @@ open class IsostaApiService {
         val thumbnailList = arrayListOf<Thumbnail>()
         // Fetch the website with user agent so we don't get forbidden page
         val doc = Jsoup.connect(url).userAgent("Mozilla/5.0").get()
+        println("INFO->IsostaApiService.kt: The doc is " + doc)
         // Load all items
         val allInfo = doc.getElementsByClass("item")
+        println("INFO->IsostaApiService.kt: allInfo is " + allInfo)
         for (i in allInfo) {
             // Get all src url of images
-            val imageSrc = i.getElementsByTag("img").attr("src")
+            var imageSrc = i.getElementsByTag("img").attr("src")
+            if (imageSrc[0] != 'h') {
+                imageSrc = i.getElementsByTag("img").attr("data-src")
+            }
+            println("LOG->IsostaApiService.kt: the imageSrc is " + imageSrc)
             // Get the information text for the thumbnail.  Cut out the alt part that describes the picture.
             // Like "May be an image containing text"
             val imageText = i.getElementsByTag("img").attr("alt")
+            println("LOG->IsostaApiService.kt: the imageText is " + imageSrc)
             // Get the post link
             val postLink = hostName + i.getElementsByTag("a").attr("href")
+            println("LOG->IsostaApiService.kt: the postLink is " + postLink)
             // The src might be not be https source but instead //assets... so only take the https srcs
             if (imageSrc[0] == 'h') {
-                println("LOG: the imagesrc is: $imageSrc")
+                println("LOG->IsostaApiService.kt: the new imageSrc is: $imageSrc")
                 val newThumbnail = Thumbnail(
                     picture = imageSrc,
                     text = imageText,
                     postLink = postLink
                 )
                 thumbnailList.add(newThumbnail)
+                println("LOG->IsostaApiService.kt: Adding new thumbnail to list")
             }
         }
 
@@ -187,11 +196,12 @@ open class IsostaApiService {
 
     // Search for a user
     open suspend fun getSearchInfo(query: String): List<IsostaUser> {
-        val url = query.replace(" ","+")
+        val url = hostName + "/search?q=" + query.replace(" ","+")
         val userList = arrayListOf<IsostaUser>()
 
+        println("LOG->IsostaApiService.kt: Performing network request with url: " + url)
         val doc = Jsoup.connect(url).userAgent("Mozilla/5.0").get()
-        println("INFO: The doc of the post: " + doc)
+        println("INFO->IsostaApiService.kt: The doc of the post: " + doc)
 
         val allUserInfo = doc.getElementsByClass("tab-item user-item")
         for (user in allUserInfo) {
@@ -205,14 +215,14 @@ open class IsostaApiService {
             if (profilePicture == "") {
                 continue
             }
-            println("LOG: profilePicture = " + profilePicture)
+            println("LOG->IsostaApiService.kt: profilePicture = " + profilePicture)
 
             val profileName = user.getElementsByClass("fullname")[0].getElementsByTag("span").text()
-            println("LOG: profileName = " + profileName)
+            println("LOG->IsostaApiService.kt: profileName = " + profileName)
             val profileHandle = user.getElementsByClass("username")[0].text()
-            println("LOG: profileHandle = " + profileHandle)
+            println("LOG->IsostaApiService.kt: profileHandle = " + profileHandle)
             val profileLink = hostName + user.attr("href")
-            println("LOG: profileLink = " + profileLink)
+            println("LOG->IsostaApiService.kt: profileLink = " + profileLink)
 
             userList.add(
                 IsostaUser(
