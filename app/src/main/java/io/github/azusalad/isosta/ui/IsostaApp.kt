@@ -83,6 +83,10 @@ fun IsostaApp(
                         onSearchButtonClicked = {
                             navController.navigate(IsostaScreen.Search.name)
                             println("LOG: Navigating to the search page")
+                        },
+                        onRefreshButtonClicked = {
+                            println("LOG->IsostaApp.kt: Refresh button clicked")
+                            isostaViewModel.getThumbnailPhotos()  // TODO: Put in an argument
                         }
                         // The content padding here is not needed anymore due to the padding being
                         // put on the NavHost

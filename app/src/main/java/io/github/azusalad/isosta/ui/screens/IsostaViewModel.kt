@@ -23,6 +23,7 @@ import kotlinx.coroutines.withContext
 sealed interface IsostaHomeUiState {
     data class Success(val thumbnailPhotos: List<Thumbnail>) : IsostaHomeUiState
     data class Error(val errorString: String) : IsostaHomeUiState
+    object Empty : IsostaHomeUiState
     object Loading : IsostaHomeUiState
 }
 
@@ -54,7 +55,7 @@ class IsostaViewModel(
     private val isostaUserRepository: IsostaUserRepository
 ): ViewModel() {
     // Mutable state stores the status of the most recent request.  The initial state is loading.
-    var isostaHomeUiState: IsostaHomeUiState by mutableStateOf(IsostaHomeUiState.Loading)
+    var isostaHomeUiState: IsostaHomeUiState by mutableStateOf(IsostaHomeUiState.Empty)
         private set
         // ^ private setter
     var isostaPostUiState: IsostaPostUiState by mutableStateOf(IsostaPostUiState.Loading)
@@ -65,7 +66,7 @@ class IsostaViewModel(
         private set
 
     init {
-        getThumbnailPhotos("https://imginn.com/suisei.daily.post/")  // TODO: Replace this placeholder
+        //getThumbnailPhotos()  // TODO: Replace this placeholder
 
         // Placeholder
 //        val yui = "https://avatars.githubusercontent.com/u/68360714?v=4"
@@ -80,7 +81,7 @@ class IsostaViewModel(
 //        isostaHomeUiState = IsostaHomeUiState.Success(thumbnailList)
     }
 
-    fun getThumbnailPhotos(url: String) {
+    fun getThumbnailPhotos(url: String = "https://imginn.com/suisei.daily.post/") {
         viewModelScope.launch {
             isostaHomeUiState = IsostaHomeUiState.Loading
             // Might not be able to connect to website so need a try catch here.

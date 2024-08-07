@@ -1,6 +1,7 @@
 package io.github.azusalad.isosta.ui.screens
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -8,7 +9,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,14 +17,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Card
 import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
@@ -33,16 +32,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
-import io.github.azusalad.isosta.R
 import io.github.azusalad.isosta.model.IsostaUser
 import io.github.azusalad.isosta.model.Thumbnail
 import io.github.azusalad.isosta.ui.components.TextMessageScreen
@@ -56,6 +48,7 @@ fun HomeScreen(
     onThumbnailClicked: (String) -> Unit,
     onUserButtonClicked: (IsostaUser) -> Unit,
     onSearchButtonClicked: () -> Unit,
+    onRefreshButtonClicked: () -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
@@ -81,20 +74,50 @@ fun HomeScreen(
 
     // Switch statement shows different things depending on the IsostaUiState
     when (isostaHomeUiState) {
-        is IsostaHomeUiState.Loading -> TextMessageScreen(text = "Loading thumbnails", modifier = modifier.fillMaxSize())
+        is IsostaHomeUiState.Empty -> HomePager(
+            thumbnailList = arrayListOf(),
+            userList = userList,
+            onThumbnailClicked = onThumbnailClicked,
+            onUserButtonClicked = onUserButtonClicked,
+            onSearchButtonClicked = onSearchButtonClicked,
+            onRefreshButtonClicked = onRefreshButtonClicked,
+            modifier = modifier.fillMaxWidth(),
+            onFeedText = "Welcome to Isosta\n\nFollow a user to receive their posts in your home feed.",
+            contentPadding = contentPadding,
+        )
+        is IsostaHomeUiState.Loading -> HomePager(
+            thumbnailList = arrayListOf(),
+            userList = userList,
+            onThumbnailClicked = onThumbnailClicked,
+            onUserButtonClicked = onUserButtonClicked,
+            onSearchButtonClicked = onSearchButtonClicked,
+            onRefreshButtonClicked = onRefreshButtonClicked,
+            modifier = modifier.fillMaxWidth(),
+            onFeedText = "Loading thumbnails",
+            contentPadding = contentPadding,
+        )
         is IsostaHomeUiState.Success -> HomePager(
             thumbnailList = isostaHomeUiState.thumbnailPhotos,
             userList = userList,
             onThumbnailClicked = onThumbnailClicked,
             onUserButtonClicked = onUserButtonClicked,
             onSearchButtonClicked = onSearchButtonClicked,
+            onRefreshButtonClicked = onRefreshButtonClicked,
             modifier = modifier.fillMaxWidth(),
             contentPadding = contentPadding,
         )
         //is IsostaUiState.Success -> TextMessageScreen(text = isostaUiState.thumbnailPhotos, modifier = modifier.fillMaxWidth())
-        is IsostaHomeUiState.Error -> TextMessageScreen(
-            text = "There was a error loading thumbnails:\n\n" + isostaHomeUiState.errorString,
-            modifier = modifier.fillMaxSize())
+        is IsostaHomeUiState.Error -> HomePager(
+            thumbnailList = arrayListOf(),
+            userList = userList,
+            onThumbnailClicked = onThumbnailClicked,
+            onUserButtonClicked = onUserButtonClicked,
+            onSearchButtonClicked = onSearchButtonClicked,
+            onRefreshButtonClicked = onRefreshButtonClicked,
+            modifier = modifier.fillMaxWidth(),
+            onFeedText = "There was a error loading thumbnails:\n\n" + isostaHomeUiState.errorString,
+            contentPadding = contentPadding,
+        )
     }
 }
 
@@ -106,7 +129,9 @@ fun HomePager(
     onThumbnailClicked: (String) -> Unit,
     onUserButtonClicked: (IsostaUser) -> Unit,
     onSearchButtonClicked: () -> Unit,
+    onRefreshButtonClicked: () -> Unit,
     modifier: Modifier = Modifier,
+    onFeedText: String = "",
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
     val pages = arrayListOf<String>()
@@ -150,12 +175,22 @@ fun HomePager(
         ) { page ->
             if (page == 0) {
                 // First page is main feed
-                ThumbnailList(
-                    thumbnailList = thumbnailList,
-                    onThumbnailClicked = onThumbnailClicked,
-                    modifier = modifier.fillMaxWidth(),
-                    contentPadding = contentPadding,
-                )
+                Column(
+                    verticalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    RefreshBar(onRefreshButtonClicked = onRefreshButtonClicked)
+                    if (onFeedText == "") {
+                        ThumbnailList(
+                            thumbnailList = thumbnailList,
+                            onThumbnailClicked = onThumbnailClicked,
+                            modifier = modifier.fillMaxWidth(),
+                            contentPadding = contentPadding,
+                        )
+                    } else {
+                        TextMessageScreen(text = onFeedText, modifier = Modifier.fillMaxSize())
+                    }
+                }
             }
             else {
                 // Second page is follow column
@@ -180,6 +215,32 @@ fun HomePager(
             text = { Text(text = "Search") },
             modifier = Modifier.padding(24.dp).align(Alignment.BottomEnd)
         )
+    }
+}
+
+@Composable
+fun RefreshBar(
+    onRefreshButtonClicked: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surfaceVariant)
+    ) {
+        Text(
+            text = "Refresh if out of date",
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(16.dp)
+        )
+        SmallFloatingActionButton(
+            onClick = onRefreshButtonClicked,
+            modifier = Modifier
+        ) {
+            Icon(Icons.Default.Refresh, "Refresh Button")
+        }
     }
 }
 
@@ -314,6 +375,7 @@ fun HomePagerPreview() {
         userList = userList,
         onThumbnailClicked = {},
         onUserButtonClicked = {},
-        onSearchButtonClicked = {}
+        onSearchButtonClicked = {},
+        onRefreshButtonClicked = {}
     )
 }
