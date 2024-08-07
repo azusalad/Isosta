@@ -24,6 +24,6 @@ interface ThumbnailDao {
     fun loadThumbnail(postLink: String): Flow<Thumbnail>
 
     @Query("SELECT * from thumbnail ORDER BY date DESC")
-    fun loadAllThumbnail(): Flow<Thumbnail>
+    fun loadAllThumbnail(): Flow<List<Thumbnail>>
 }
 

@@ -14,7 +14,7 @@ abstract class ThumbnailDatabase : RoomDatabase() {
         @Volatile
         private var Instance: ThumbnailDatabase? = null
 
-        fun getDatabase(context: Context): ThumbnailDatabase {
+        fun loadDatabase(context: Context): ThumbnailDatabase {
             return Instance ?: synchronized(this) {
                 Room.databaseBuilder(context, ThumbnailDatabase::class.java, "thumbnail_database")
                     .fallbackToDestructiveMigration()  // old data base is lost upon schema change
