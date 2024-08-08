@@ -107,7 +107,7 @@ fun UserBio(
     postCount: String,
     followerCount: String,
     followingCount: String,
-    viewModel: ThumbnailViewModel = viewModel(factory = ThumbnailViewModel.Factory),
+    thumbnailViewModel: ThumbnailViewModel = viewModel(factory = ThumbnailViewModel.Factory),
     modifier: Modifier = Modifier
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -180,9 +180,7 @@ fun UserBio(
                     onClick = {
                         /* TODO: Add button depressed state */
                         coroutineScope.launch {
-                            for (thumbnail in user.thumbnailList) {
-                                viewModel.saveThumbnail(thumbnail)
-                            }
+                            thumbnailViewModel.saveThumbnails(user.thumbnailList)
                         }
                     }
                 )

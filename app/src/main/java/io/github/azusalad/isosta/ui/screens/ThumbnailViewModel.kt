@@ -35,6 +35,12 @@ class ThumbnailViewModel(private val thumbnailRoomRepository: ThumbnailRoomRepos
         }
     }
 
+    suspend fun saveThumbnails(thumbnailList: List<Thumbnail>) {
+        for (thumbnail in thumbnailList) {
+            saveThumbnail(thumbnail)
+        }
+    }
+
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {

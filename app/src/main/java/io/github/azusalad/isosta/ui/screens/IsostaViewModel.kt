@@ -28,7 +28,7 @@ import kotlinx.coroutines.withContext
 sealed interface IsostaHomeUiState {
     data class Success(val thumbnailPhotos: List<Thumbnail>) : IsostaHomeUiState
     data class Error(val errorString: String) : IsostaHomeUiState
-    object Empty : IsostaHomeUiState
+    object OfflineLoad : IsostaHomeUiState
     object Loading : IsostaHomeUiState
 }
 
@@ -63,7 +63,7 @@ class IsostaViewModel(
     private val thumbnailRepository: ThumbnailRoomRepository
 ): ViewModel() {
     // Mutable state stores the status of the most recent request.  The initial state is loading.
-    var isostaHomeUiState: IsostaHomeUiState by mutableStateOf(IsostaHomeUiState.Empty)
+    var isostaHomeUiState: IsostaHomeUiState by mutableStateOf(IsostaHomeUiState.OfflineLoad)
         private set
         // ^ private setter
     var isostaPostUiState: IsostaPostUiState by mutableStateOf(IsostaPostUiState.Loading)
