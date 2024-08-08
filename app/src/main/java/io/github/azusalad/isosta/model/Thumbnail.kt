@@ -11,4 +11,7 @@ data class Thumbnail (
     val text: String,
     val sourceHandle: String,
     val date: Int = 0,
+
+    //@ColumnInfo(typeAffinity = ColumnInfo.BLOB)
+    var pictureString: String? = null
 )

@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import io.github.azusalad.isosta.model.Thumbnail
 
-@Database(entities = [Thumbnail::class], version = 1, exportSchema = false)
+@Database(entities = [Thumbnail::class], version = 7, exportSchema = false)
 abstract class ThumbnailDatabase : RoomDatabase() {
     abstract fun thumbnailDao(): ThumbnailDao
 

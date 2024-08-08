@@ -2,6 +2,7 @@ package io.github.azusalad.isosta.ui
 
 import android.content.Context
 import android.content.Intent
+import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -30,6 +31,7 @@ import io.github.azusalad.isosta.model.IsostaUser
 import io.github.azusalad.isosta.ui.screens.PostScreen
 import io.github.azusalad.isosta.ui.screens.SearchScreen
 import io.github.azusalad.isosta.ui.screens.SearchScreenPreview
+import io.github.azusalad.isosta.ui.screens.ThumbnailViewModel
 import io.github.azusalad.isosta.ui.screens.UserScreen
 
 // Contains composables that render what the user would see in the Isosta App
@@ -60,6 +62,7 @@ fun IsostaApp(
             modifier = Modifier.fillMaxSize()
         ) {
             val isostaViewModel: IsostaViewModel = viewModel(factory = IsostaViewModel.Factory)
+            val thumbnailViewModel: ThumbnailViewModel = viewModel(factory = ThumbnailViewModel.Factory)
             val thumbnailUiState by isostaViewModel.thumbnailUiState.collectAsState()
             NavHost(
                 navController = navController,
@@ -113,12 +116,17 @@ fun IsostaApp(
                     )
                 }
                 composable(route = IsostaScreen.User.name) {
+                    val context = LocalContext.current
                     UserScreen(
                         isostaUserUiState = isostaViewModel.isostaUserUiState,
                         onThumbnailClicked = { url: String ->
                             navController.navigate(IsostaScreen.Post.name)
                             println("LOG: getting post info for " + url)
                             isostaViewModel.getPostInfo(url)
+                        },
+                        onFollowClicked = {
+                            thumbnailViewModel.saveThumbnails(context = context, thumbnailList = it)
+                            Toast.makeText(context, "Saving thumbnails...", Toast.LENGTH_SHORT).show()
                         }
                     )
                     //UserColumnPreview()

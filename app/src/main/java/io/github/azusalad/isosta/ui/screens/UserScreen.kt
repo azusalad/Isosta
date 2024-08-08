@@ -50,6 +50,7 @@ import kotlinx.coroutines.launch
 fun UserScreen(
     isostaUserUiState: IsostaUserUiState,
     onThumbnailClicked: (String) -> Unit,
+    onFollowClicked: (List<Thumbnail>) -> Unit,
     modifier: Modifier = Modifier
 ) {
     // Switch statement shows different things depending on the IsostaUserUiState
@@ -59,7 +60,8 @@ fun UserScreen(
         }
         is IsostaUserUiState.Success -> UserColumn(
             user = isostaUserUiState.user,
-            onThumbnailClicked = onThumbnailClicked
+            onThumbnailClicked = onThumbnailClicked,
+            onFollowClicked = onFollowClicked
         )
         is IsostaUserUiState.Error -> TextMessageScreen(
             text = "There was a error loading the user:\n\n" + isostaUserUiState.errorString,
@@ -71,6 +73,7 @@ fun UserScreen(
 fun UserColumn(
     user: IsostaUser,
     onThumbnailClicked: (String) -> Unit,
+    onFollowClicked: (List<Thumbnail>) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -82,7 +85,8 @@ fun UserColumn(
                 user = user,
                 postCount = user.postCount,
                 followerCount = user.followerCount,
-                followingCount = user.followingCount
+                followingCount = user.followingCount,
+                onFollowClicked = onFollowClicked
             )
             Spacer(
                 modifier = Modifier.height(10.dp)
@@ -108,6 +112,7 @@ fun UserBio(
     followerCount: String,
     followingCount: String,
     thumbnailViewModel: ThumbnailViewModel = viewModel(factory = ThumbnailViewModel.Factory),
+    onFollowClicked: (List<Thumbnail>) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -179,9 +184,7 @@ fun UserBio(
                 .clickable(
                     onClick = {
                         /* TODO: Add button depressed state */
-                        coroutineScope.launch {
-                            thumbnailViewModel.saveThumbnails(user.thumbnailList)
-                        }
+                        onFollowClicked(user.thumbnailList)
                     }
                 )
 
@@ -253,6 +256,7 @@ fun UserColumnPreview() {
             postCount = "789",
             thumbnailList = thumbnailList
         ),
-        onThumbnailClicked = {}
+        onThumbnailClicked = {},
+        onFollowClicked = {}
     )
 }

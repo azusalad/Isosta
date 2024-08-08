@@ -1,18 +1,16 @@
 package io.github.azusalad.isosta.ui.components
 
+import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
@@ -21,7 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
@@ -32,12 +29,12 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import io.github.azusalad.isosta.R
 import io.github.azusalad.isosta.model.IsostaUser
 import io.github.azusalad.isosta.model.Thumbnail
+import io.github.azusalad.isosta.ui.screens.stringToBitmap
 
 @Composable
 fun TextMessageScreen(
@@ -65,9 +62,17 @@ fun TextMessageScreen(
 fun ThumbnailCard(
     thumbnail: Thumbnail, onThumbnailClicked: (String) -> Unit, modifier: Modifier = Modifier
 ) {
-    println("LOG: The current picture is: " + thumbnail.picture)
     val haptics = LocalHapticFeedback.current
     val clipboardManager = LocalClipboardManager.current
+    var picture: Any
+    try {
+         picture = thumbnail.pictureString?.let { stringToBitmap(it) } ?: thumbnail.picture
+    }
+    catch (e: Exception) {
+        picture = thumbnail.picture
+        Toast.makeText(LocalContext.current, e.toString()+ thumbnail.postLink, Toast.LENGTH_SHORT).show()
+    }
+    println("LOG->CommonUi.kt: The current picture is: " + picture)
     Card(
         // User clicks on the thumbnail card.  Load full Isosta post on click.
         onClick = {onThumbnailClicked(thumbnail.postLink)},
@@ -76,7 +81,7 @@ fun ThumbnailCard(
         Column {
             AsyncImage(
                 model = ImageRequest.Builder(context = LocalContext.current)
-                    .data(thumbnail.picture)
+                    .data(picture)
                     .crossfade(true)
                     .setHeader("User-Agent", "Mozilla/5.0")
                     .build(),
