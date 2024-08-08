@@ -12,10 +12,15 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import io.github.azusalad.isosta.IsostaApplication
 import io.github.azusalad.isosta.data.IsostaPostRepository
 import io.github.azusalad.isosta.data.IsostaUserRepository
+import io.github.azusalad.isosta.data.ThumbnailRoomRepository
 import io.github.azusalad.isosta.model.IsostaPost
 import io.github.azusalad.isosta.model.IsostaUser
 import io.github.azusalad.isosta.model.Thumbnail
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -50,9 +55,12 @@ sealed interface IsostaSearchUiState {
     object Loading : IsostaSearchUiState
 }
 
+data class ThumbnailUiState(val thumbnailList: List<Thumbnail> = arrayListOf())
+
 class IsostaViewModel(
     private val isostaPostRepository: IsostaPostRepository,
-    private val isostaUserRepository: IsostaUserRepository
+    private val isostaUserRepository: IsostaUserRepository,
+    private val thumbnailRepository: ThumbnailRoomRepository
 ): ViewModel() {
     // Mutable state stores the status of the most recent request.  The initial state is loading.
     var isostaHomeUiState: IsostaHomeUiState by mutableStateOf(IsostaHomeUiState.Empty)
@@ -64,6 +72,14 @@ class IsostaViewModel(
         private set
     var isostaSearchUiState: IsostaSearchUiState by mutableStateOf(IsostaSearchUiState.Empty)
         private set
+
+    var thumbnailUiState: StateFlow<ThumbnailUiState> =
+        thumbnailRepository.loadAllThumbnailStream().map { ThumbnailUiState(it) }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+                initialValue = ThumbnailUiState()
+            )
 
     init {
         //getThumbnailPhotos()  // TODO: Replace this placeholder
@@ -159,15 +175,18 @@ class IsostaViewModel(
     // The viewmodel does not allow arguments to be passed in when the viewmodel is created.
     // Use a factory instead to solve this issue.
     companion object {
+        private const val TIMEOUT_MILLIS = 5_000L
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as IsostaApplication)
                 val isostaPostRepository = application.container.isostaPostRepository
                 val isostaUserRepository = application.container.isostaUserRepository
+                val thumbnailRoomRepository = application.container.thumbnailRoomRepository
 
                 IsostaViewModel(
                     isostaPostRepository = isostaPostRepository,
-                    isostaUserRepository = isostaUserRepository
+                    isostaUserRepository = isostaUserRepository,
+                    thumbnailRepository = thumbnailRoomRepository
                 )
             }
         }

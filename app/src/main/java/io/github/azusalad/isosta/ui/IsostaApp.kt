@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -59,6 +60,7 @@ fun IsostaApp(
             modifier = Modifier.fillMaxSize()
         ) {
             val isostaViewModel: IsostaViewModel = viewModel(factory = IsostaViewModel.Factory)
+            val thumbnailUiState by isostaViewModel.thumbnailUiState.collectAsState()
             NavHost(
                 navController = navController,
                 startDestination = IsostaScreen.Home.name,
@@ -68,6 +70,7 @@ fun IsostaApp(
                     // The main home screen and feed
                     HomeScreen(
                         isostaHomeUiState = isostaViewModel.isostaHomeUiState,
+                        thumbnailUiState = thumbnailUiState,
                         onThumbnailClicked = {
                             // it is the url to go to
                             //isostaViewModel.pageState.postLink = it

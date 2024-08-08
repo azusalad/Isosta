@@ -29,6 +29,7 @@ import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,11 +41,13 @@ import io.github.azusalad.isosta.model.Thumbnail
 import io.github.azusalad.isosta.ui.components.TextMessageScreen
 import io.github.azusalad.isosta.ui.components.ThumbnailCard
 import io.github.azusalad.isosta.ui.components.UserCard
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen(
     isostaHomeUiState: IsostaHomeUiState,
+    thumbnailUiState: ThumbnailUiState,
     onThumbnailClicked: (String) -> Unit,
     onUserButtonClicked: (IsostaUser) -> Unit,
     onSearchButtonClicked: () -> Unit,
@@ -75,14 +78,14 @@ fun HomeScreen(
     // Switch statement shows different things depending on the IsostaUiState
     when (isostaHomeUiState) {
         is IsostaHomeUiState.Empty -> HomePager(
-            thumbnailList = arrayListOf(),
+            thumbnailList = thumbnailUiState.thumbnailList,
             userList = userList,
             onThumbnailClicked = onThumbnailClicked,
             onUserButtonClicked = onUserButtonClicked,
             onSearchButtonClicked = onSearchButtonClicked,
             onRefreshButtonClicked = onRefreshButtonClicked,
             modifier = modifier.fillMaxWidth(),
-            onFeedText = "Welcome to Isosta\n\nFollow a user to receive their posts in your home feed.",
+            //onFeedText = "Welcome to Isosta\n\nFollow a user to receive their posts in your home feed.",
             contentPadding = contentPadding,
         )
         is IsostaHomeUiState.Loading -> HomePager(

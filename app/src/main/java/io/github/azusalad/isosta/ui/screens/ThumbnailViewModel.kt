@@ -14,22 +14,22 @@ import io.github.azusalad.isosta.model.Thumbnail
 import io.github.azusalad.isosta.data.ThumbnailRoomRepository
 
 class ThumbnailViewModel(private val thumbnailRoomRepository: ThumbnailRoomRepository) : ViewModel() {
-    var thumbnailUiState by mutableStateOf(ThumbnailUiState())
-        private set
+//    var thumbnailUiState by mutableStateOf(ThumbnailUiState())
+//        private set
 
-    fun updateUiState(thumbnailDetails: ThumbnailDetails) {
-        thumbnailUiState =
-            ThumbnailUiState(thumbnailDetails = thumbnailDetails, isEntryValid = validateInput(thumbnailDetails))
-    }
+//    fun updateUiState(thumbnailDetails: ThumbnailDetails) {
+//        thumbnailUiState =
+//            ThumbnailUiState(thumbnailDetails = thumbnailDetails, isEntryValid = validateInput(thumbnailDetails))
+//    }
 
-    private fun validateInput(uiState: ThumbnailDetails = thumbnailUiState.thumbnailDetails): Boolean {
-        return with(uiState) {
-            postLink.isNotBlank() && picture.isNotBlank() && sourceHandle.isNotBlank()
-        }
+    private fun validateInput(thumbnail: Thumbnail): Boolean {
+//        return with(uiState) {
+        return thumbnail.postLink.isNotBlank() && thumbnail.picture.isNotBlank() && thumbnail.sourceHandle.isNotBlank()
+//        }
     }
 
     suspend fun saveThumbnail(thumbnail: Thumbnail) {
-        if (validateInput(thumbnail.toThumbnailDetails())) {
+        if (validateInput(thumbnail)) {
             println("LOG->ThumbnailViewModel.kt: Saving thumbnail " + thumbnail.postLink)
             thumbnailRoomRepository.insertThumbnail(thumbnail)
         }
@@ -49,10 +49,10 @@ class ThumbnailViewModel(private val thumbnailRoomRepository: ThumbnailRoomRepos
     }
 }
 
-data class ThumbnailUiState(
-    val thumbnailDetails: ThumbnailDetails = ThumbnailDetails(),
-    val isEntryValid: Boolean = false
-)
+//data class ThumbnailUiState(
+//    val thumbnailDetails: ThumbnailDetails = ThumbnailDetails(),
+//    val isEntryValid: Boolean = false
+//)
 
 data class ThumbnailDetails(
     val postLink: String = "",
@@ -63,19 +63,19 @@ data class ThumbnailDetails(
 )
 
 // Details to Thumbnail
-fun ThumbnailDetails.toThumbnail(): Thumbnail = Thumbnail(
-    postLink = postLink,
-    picture = picture,
-    text = text,
-    sourceHandle = sourceHandle,
-    date = date
-)
+//fun ThumbnailDetails.toThumbnail(): Thumbnail = Thumbnail(
+//    postLink = postLink,
+//    picture = picture,
+//    text = text,
+//    sourceHandle = sourceHandle,
+//    date = date
+//)
 
 // Thumbnail to ThumbnailUiState
-fun Thumbnail.ThumbnailUiState(isEntryValid: Boolean = false): ThumbnailUiState = ThumbnailUiState(
-    thumbnailDetails = this.toThumbnailDetails(),
-    isEntryValid = isEntryValid
-)
+//fun Thumbnail.ThumbnailUiState(isEntryValid: Boolean = false): ThumbnailUiState = ThumbnailUiState(
+//    thumbnailDetails = this.toThumbnailDetails(),
+//    isEntryValid = isEntryValid
+//)
 
 // Thumbnail to Details
 fun Thumbnail.toThumbnailDetails(): ThumbnailDetails = ThumbnailDetails(
