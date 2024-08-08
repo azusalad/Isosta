@@ -28,9 +28,10 @@ class ThumbnailViewModel(private val thumbnailRoomRepository: ThumbnailRoomRepos
         }
     }
 
-    suspend fun saveThumbnail() {
-        if (validateInput()) {
-            thumbnailRoomRepository.insertThumbnail(thumbnailUiState.thumbnailDetails.toThumbnail())
+    suspend fun saveThumbnail(thumbnail: Thumbnail) {
+        if (validateInput(thumbnail.toThumbnailDetails())) {
+            println("LOG->ThumbnailViewModel.kt: Saving thumbnail " + thumbnail.postLink)
+            thumbnailRoomRepository.insertThumbnail(thumbnail)
         }
     }
 

@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ThumbnailDao {
-    @Insert(onConflict = OnConflictStrategy.IGNORE)  // If you insert from more than one screen, you need an actual conflict strategy
+    @Insert(onConflict = OnConflictStrategy.REPLACE)  // If existing item, just replace
     suspend fun insert (user: Thumbnail)
 
     @Update

@@ -30,6 +30,7 @@ import coil.request.ImageRequest
 import io.github.azusalad.isosta.R
 import io.github.azusalad.isosta.model.IsostaUser
 import androidx.compose.material3.Text
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -39,9 +40,11 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import io.github.azusalad.isosta.model.Thumbnail
 import io.github.azusalad.isosta.ui.components.TextMessageScreen
 import io.github.azusalad.isosta.ui.components.ThumbnailCard
+import kotlinx.coroutines.launch
 
 @Composable
 fun UserScreen(
@@ -104,8 +107,10 @@ fun UserBio(
     postCount: String,
     followerCount: String,
     followingCount: String,
+    viewModel: ThumbnailViewModel = viewModel(factory = ThumbnailViewModel.Factory),
     modifier: Modifier = Modifier
 ) {
+    val coroutineScope = rememberCoroutineScope()
     val haptics = LocalHapticFeedback.current
     val clipboardManager = LocalClipboardManager.current
     Column(
@@ -172,7 +177,14 @@ fun UserBio(
                 .height(50.dp)
                 .background(MaterialTheme.colorScheme.primary)  // TODO: use secondary for depressed state
                 .clickable(
-                    onClick = {/* TODO: Add button depressed state */}
+                    onClick = {
+                        /* TODO: Add button depressed state */
+                        coroutineScope.launch {
+                            for (thumbnail in user.thumbnailList) {
+                                viewModel.saveThumbnail(thumbnail)
+                            }
+                        }
+                    }
                 )
 
         ) {
