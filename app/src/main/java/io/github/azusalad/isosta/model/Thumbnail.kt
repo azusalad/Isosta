@@ -9,6 +9,6 @@ data class Thumbnail (
     val postLink: String,
     val picture: String,
     val text: String,
-    val sourceUser: String,
+    val sourceHandle: String,
     val date: Int = 0,
 )

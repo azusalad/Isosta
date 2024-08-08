@@ -1,6 +1,5 @@
 package io.github.azusalad.network
 
-import io.github.azusalad.isosta.R
 import io.github.azusalad.isosta.model.IsostaComment
 import io.github.azusalad.isosta.model.IsostaUser
 import io.github.azusalad.isosta.model.IsostaPost
@@ -60,7 +59,7 @@ open class IsostaApiService {
                     picture = imageSrc,
                     text = imageText,
                     postLink = postLink,
-                    sourceUser = profileHandle
+                    sourceHandle = profileHandle
                 )
                 thumbnailList.add(newThumbnail)
                 println("LOG->IsostaApiService.kt: Adding new thumbnail to list")

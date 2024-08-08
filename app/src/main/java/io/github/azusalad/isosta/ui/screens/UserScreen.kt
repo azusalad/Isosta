@@ -39,7 +39,6 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import io.github.azusalad.isosta.model.IsostaComment
 import io.github.azusalad.isosta.model.Thumbnail
 import io.github.azusalad.isosta.ui.components.TextMessageScreen
 import io.github.azusalad.isosta.ui.components.ThumbnailCard
@@ -220,14 +219,14 @@ fun UserColumnPreview() {
             picture = yui,
             postLink = "",
             text = "description 1",
-            sourceUser = ""
+            sourceHandle = ""
         )
     )
     thumbnailList.add(
         Thumbnail(
             picture = yui,
             postLink = "",
-            sourceUser = "",
+            sourceHandle = "",
             text = "description description description description description description description description description description description description description description "
         )
     )
