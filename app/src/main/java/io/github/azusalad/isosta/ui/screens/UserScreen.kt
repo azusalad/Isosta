@@ -40,17 +40,17 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import io.github.azusalad.isosta.model.Thumbnail
 import io.github.azusalad.isosta.ui.components.TextMessageScreen
 import io.github.azusalad.isosta.ui.components.ThumbnailCard
-import kotlinx.coroutines.launch
 
 @Composable
 fun UserScreen(
     isostaUserUiState: IsostaUserUiState,
+    userUiState: UserUiState,
     onThumbnailClicked: (String) -> Unit,
     onFollowClicked: (IsostaUser) -> Unit,
+    onUnfollowClicked: (IsostaUser) -> Unit,
     modifier: Modifier = Modifier
 ) {
     // Switch statement shows different things depending on the IsostaUserUiState
@@ -58,11 +58,15 @@ fun UserScreen(
         is IsostaUserUiState.Loading -> {
             TextMessageScreen(text = "Loading user", modifier = modifier.fillMaxSize())
         }
-        is IsostaUserUiState.Success -> UserColumn(
-            user = isostaUserUiState.user,
-            onThumbnailClicked = onThumbnailClicked,
-            onFollowClicked = onFollowClicked
-        )
+        is IsostaUserUiState.Success -> {
+            UserColumn(
+                user = isostaUserUiState.user,
+                onThumbnailClicked = onThumbnailClicked,
+                onFollowClicked = onFollowClicked,
+                onUnfollowClicked = onUnfollowClicked,
+                following = (userUiState.userList.map {it.profileHandle}).contains(isostaUserUiState.user.profileHandle)
+            )
+        }
         is IsostaUserUiState.Error -> TextMessageScreen(
             text = "There was a error loading the user:\n\n" + isostaUserUiState.errorString,
             modifier = modifier.fillMaxSize())
@@ -74,6 +78,8 @@ fun UserColumn(
     user: IsostaUser,
     onThumbnailClicked: (String) -> Unit,
     onFollowClicked: (IsostaUser) -> Unit,
+    onUnfollowClicked: (IsostaUser) -> Unit,
+    following: Boolean,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -86,7 +92,9 @@ fun UserColumn(
                 postCount = user.postCount,
                 followerCount = user.followerCount,
                 followingCount = user.followingCount,
-                onFollowClicked = onFollowClicked
+                onFollowClicked = onFollowClicked,
+                onUnfollowClicked = onUnfollowClicked,
+                following = following,
             )
             Spacer(
                 modifier = Modifier.height(10.dp)
@@ -111,11 +119,11 @@ fun UserBio(
     postCount: String,
     followerCount: String,
     followingCount: String,
-    thumbnailViewModel: ThumbnailViewModel = viewModel(factory = ThumbnailViewModel.Factory),
     onFollowClicked: (IsostaUser) -> Unit,
+    onUnfollowClicked: (IsostaUser) -> Unit,
+    following: Boolean,
     modifier: Modifier = Modifier
 ) {
-    val coroutineScope = rememberCoroutineScope()
     val haptics = LocalHapticFeedback.current
     val clipboardManager = LocalClipboardManager.current
     Column(
@@ -175,26 +183,51 @@ fun UserBio(
             StatText(topText = followerCount, bottomText = "followers")
             StatText(topText = followingCount, bottomText = "following")
         }
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .width(150.dp)
-                .height(50.dp)
-                .background(MaterialTheme.colorScheme.primary)  // TODO: use secondary for depressed state
-                .clickable(
-                    onClick = {
-                        /* TODO: Add button depressed state */
-                        onFollowClicked(user)
-                    }
-                )
+        if (!following) {
+            // If not following the user yet
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .width(150.dp)
+                    .height(50.dp)
+                    .background(MaterialTheme.colorScheme.primary)
+                    .clickable(
+                        onClick = {
+                            onFollowClicked(user)
+                        }
+                    )
 
-        ) {
-            Text(
-                text = "Follow ♡",  //  TODO: Add following ♥ when button depressed
-                style = MaterialTheme.typography.titleLarge,
-                textAlign = TextAlign.Center,
-                color = Color.White
-            )
+            ) {
+                Text(
+                    text = "Follow ♡",
+                    style = MaterialTheme.typography.titleLarge,
+                    textAlign = TextAlign.Center,
+                    color = Color.White
+                )
+            }
+        }
+        else {
+            // User is already followed
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .width(150.dp)
+                    .height(50.dp)
+                    .background(MaterialTheme.colorScheme.secondary)
+                    .clickable(
+                        onClick = {
+                            onUnfollowClicked(user)
+                        }
+                    )
+
+            ) {
+                Text(
+                    text = "Following ♥",
+                    style = MaterialTheme.typography.titleLarge,
+                    textAlign = TextAlign.Center,
+                    color = Color.White
+                )
+            }
         }
     }
 }
@@ -257,6 +290,8 @@ fun UserColumnPreview() {
             thumbnailList = thumbnailList
         ),
         onThumbnailClicked = {},
-        onFollowClicked = {}
+        onFollowClicked = {},
+        onUnfollowClicked = {},
+        following = false
     )
 }

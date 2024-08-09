@@ -83,17 +83,17 @@ fun IsostaApp(
                             // it is the url to go to
                             //isostaViewModel.pageState.postLink = it
                             navController.navigate(IsostaScreen.Post.name)
-                            println("LOG: getting post info for " + it)
+                            println("LOG->IsostaApp.kt: getting post info for " + it)
                             isostaViewModel.getPostInfo(it)
                         },
                         onUserButtonClicked = { user: IsostaUser ->
                             navController.navigate(IsostaScreen.User.name)
-                            println("LOG: loading user page for " + user.profileLink)
+                            println("LOG->IsostaApp.kt: loading user page for " + user.profileLink)
                             isostaViewModel.getUserInfo(user.profileLink)
                         },
                         onSearchButtonClicked = {
                             navController.navigate(IsostaScreen.Search.name)
-                            println("LOG: Navigating to the search page")
+                            println("LOG->IsostaApp.kt: Navigating to the search page")
                         },
                         onRefreshButtonClicked = {
                             println("LOG->IsostaApp.kt: Refresh button clicked")
@@ -119,7 +119,7 @@ fun IsostaApp(
                         },
                         onUserButtonClicked = { user: IsostaUser ->
                             navController.navigate(IsostaScreen.User.name)
-                            println("LOG: loading user page for " + user.profileLink)
+                            println("LOG->IsostaApp.kt: loading user page for " + user.profileLink)
                             isostaViewModel.getUserInfo(user.profileLink)
                         }
                     )
@@ -128,16 +128,21 @@ fun IsostaApp(
                     val context = LocalContext.current
                     UserScreen(
                         isostaUserUiState = isostaViewModel.isostaUserUiState,
+                        userUiState = userUiState,
                         onThumbnailClicked = { url: String ->
                             navController.navigate(IsostaScreen.Post.name)
-                            println("LOG: getting post info for " + url)
+                            println("LOG->IsostaApp.kt: getting post info for " + url)
                             isostaViewModel.getPostInfo(url)
                         },
                         onFollowClicked = { user: IsostaUser ->
                             userViewModel.saveUser(context = context, user = user)
-                            thumbnailViewModel.saveThumbnails(context = context, thumbnailList = user.thumbnailList!!)
+//                            thumbnailViewModel.saveThumbnails(context = context, thumbnailList = user.thumbnailList!!)
                             Toast.makeText(context, "Following user...", Toast.LENGTH_SHORT).show()
-                        }
+                        },
+                        onUnfollowClicked = { user: IsostaUser ->
+
+                            Toast.makeText(context, "Unfollowing user...", Toast.LENGTH_SHORT).show()
+                        },
                     )
                     //UserColumnPreview()
                 }
