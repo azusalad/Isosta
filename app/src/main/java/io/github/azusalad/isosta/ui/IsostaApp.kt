@@ -97,14 +97,11 @@ fun IsostaApp(
                         },
                         onRefreshButtonClicked = {
                             println("LOG->IsostaApp.kt: Refresh button clicked")
-                            for (user in userUiState.userList) {
-                                isostaViewModel.getThumbnailPhotos(
+                            isostaViewModel.getThumbnailPhotos(
                                     thumbnailViewModel = thumbnailViewModel,
                                     context = context,
-                                    url = user.profileLink,
-                                    delay = userUiState.userList.size.toLong() * 250  // Extra 250 ms delay per run for every additional user
+                                    users = userUiState.userList
                                 )
-                            }
                         }
                         // The content padding here is not needed anymore due to the padding being
                         // put on the NavHost

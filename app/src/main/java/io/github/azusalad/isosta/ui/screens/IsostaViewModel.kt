@@ -1,6 +1,7 @@
 package io.github.azusalad.isosta.ui.screens
 
 import android.content.Context
+import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -109,28 +110,31 @@ class IsostaViewModel(
 //        isostaHomeUiState = IsostaHomeUiState.Success(thumbnailList)
     }
 
-    fun getThumbnailPhotos(thumbnailViewModel: ThumbnailViewModel, context: Context, url: String, delay: Long) {
+    fun getThumbnailPhotos(thumbnailViewModel: ThumbnailViewModel, context: Context, users: List<IsostaUser>) {
+        val delay = users.size.toLong() * 250  // Extra 250 ms delay per run for every additional user
         viewModelScope.launch {
             isostaHomeUiState = IsostaHomeUiState.Loading
             // Might not be able to connect to website so need a try catch here.
             try {
                 // The viewModelScope.launch launches on the main thread which leads to network
                 // on main thread exception.  Use another dispatcher for background work.
-                println("LOG->IsostaViewModel.kt: Attempting to fetch website: " + url)
-                withContext(Dispatchers.IO) {
-                    // Use the repository to get the thumbnail photos
-                    val result = isostaUserRepository.getUserInfo(url)
-                    thumbnailViewModel.saveThumbnails(context, result.thumbnailList!!)
-                    delay(delay)
-                    isostaHomeUiState = IsostaHomeUiState.OfflineLoad
-//                    isostaHomeUiState =
-//                        IsostaHomeUiState.Success(result.thumbnailList!!)
+                for (user in users) {
+                    println("LOG->IsostaViewModel.kt: Attempting to fetch website: " + user.profileLink)
+                    Toast.makeText(context, "Fetching " + user.profileHandle, Toast.LENGTH_SHORT).show()
+                    withContext(Dispatchers.IO) {
+                        // Use the repository to get the thumbnail photos
+                        val result = isostaUserRepository.getUserInfo(user.profileLink)
+                        thumbnailViewModel.saveThumbnails(context, result.thumbnailList!!)
+                        delay(delay)
+                        isostaHomeUiState = IsostaHomeUiState.OfflineLoad
+                    }
                 }
-            } catch (e:Exception) {  // Previously IOException
+            } catch (e: Exception) {  // Previously IOException
                 isostaHomeUiState = IsostaHomeUiState.Error(e.toString())
                 println("LOG: There was an error fetching the website")
             }
         }
+
     }
 
     fun getPostInfo(url: String) {
