@@ -140,7 +140,7 @@ fun IsostaApp(
                             Toast.makeText(context, "Following user...", Toast.LENGTH_SHORT).show()
                         },
                         onUnfollowClicked = { user: IsostaUser ->
-
+                            userViewModel.deleteUser(user = user)
                             Toast.makeText(context, "Unfollowing user...", Toast.LENGTH_SHORT).show()
                         },
                     )

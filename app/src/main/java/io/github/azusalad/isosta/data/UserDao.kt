@@ -17,8 +17,8 @@ interface UserDao {
     @Update
     suspend fun update(user: IsostaUser)
 
-    @Delete
-    suspend fun delete(user: IsostaUser)
+    @Query("DELETE FROM user WHERE profileHandle = :userHandle")
+    suspend fun delete(userHandle: String)
 
     @Query("SELECT * from user WHERE profileHandle = :userHandle")
     fun loadUser(userHandle: String): Flow<IsostaUser>

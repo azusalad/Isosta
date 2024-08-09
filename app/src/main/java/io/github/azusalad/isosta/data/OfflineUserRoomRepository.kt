@@ -12,7 +12,7 @@ class OfflineUserRoomRepository(private val userDao: UserDao) : UserRoomReposito
 
     override suspend fun insertUser(user: IsostaUser) = userDao.insert(user)
 
-    override suspend fun deleteUser(user: IsostaUser) = userDao.delete(user)
+    override suspend fun deleteUser(userHandle: String) = userDao.delete(userHandle)
 
     override suspend fun updateUser(user: IsostaUser) = userDao.update(user)
 }

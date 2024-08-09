@@ -45,6 +45,12 @@ class UserViewModel(private val userRoomRepository: UserRoomRepository) : ViewMo
         }
     }
 
+    fun deleteUser(user: IsostaUser) {
+        viewModelScope.launch {
+            userRoomRepository.deleteUser(userHandle = user.profileHandle)
+        }
+    }
+
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {

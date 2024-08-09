@@ -14,7 +14,7 @@ interface UserRoomRepository {
 
     suspend fun insertUser(user: IsostaUser)
 
-    suspend fun deleteUser(user: IsostaUser)
+    suspend fun deleteUser(userHandle: String)
 
     suspend fun updateUser(user: IsostaUser)
 
