@@ -1,16 +1,23 @@
 package io.github.azusalad.isosta.ui.screens
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import coil.ImageLoader
+import coil.request.ImageRequest
+import coil.request.SuccessResult
 import io.github.azusalad.isosta.IsostaApplication
 import io.github.azusalad.isosta.data.IsostaPostRepository
 import io.github.azusalad.isosta.data.IsostaUserRepository
@@ -19,6 +26,7 @@ import io.github.azusalad.isosta.data.UserRoomRepository
 import io.github.azusalad.isosta.model.IsostaPost
 import io.github.azusalad.isosta.model.IsostaUser
 import io.github.azusalad.isosta.model.Thumbnail
+import io.github.azusalad.isosta.ui.shareBitmap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
@@ -192,6 +200,16 @@ class IsostaViewModel(
                 println("LOG->IsostaViewModel.kt: There was an error searching with the query: " + query)
                 println("LOG->IsostaViewModel.kt: the error for making the query is " + e)
             }
+        }
+    }
+
+    // https://stackoverflow.com/questions/60910978/how-to-return-value-from-async-coroutine-scope-such-as-viewmodelscope-to-your-ui
+    fun getBitmap(context: Context, request: ImageRequest) {
+        viewModelScope.launch {
+            val loader = ImageLoader(context)
+            val result = (loader.execute(request) as SuccessResult).drawable
+            val bitmap = (result as BitmapDrawable).bitmap
+            shareBitmap(context = context, bitmap = bitmap)
         }
     }
 

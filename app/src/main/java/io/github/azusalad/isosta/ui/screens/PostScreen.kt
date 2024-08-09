@@ -1,5 +1,6 @@
 package io.github.azusalad.isosta.ui.screens
 
+import android.graphics.Bitmap
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -38,8 +39,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.ImageLoader
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import coil.request.SuccessResult
 import io.github.azusalad.isosta.R
 import io.github.azusalad.isosta.model.IsostaComment
 import io.github.azusalad.isosta.model.IsostaPost
@@ -53,6 +56,7 @@ fun PostScreen(
     isostaPostUiState: IsostaPostUiState,
     onShareButtonClicked: (String) -> Unit,
     onUserButtonClicked: (IsostaUser) -> Unit,
+    onMediaHeld: (ImageRequest) -> Unit,
     modifier: Modifier = Modifier
 ) {
     // Switch statement shows different things depending on the IsostaUiState
@@ -64,6 +68,7 @@ fun PostScreen(
             isostaPost = isostaPostUiState.isostaPost,
             onShareButtonClicked = onShareButtonClicked,
             onUserButtonClicked = onUserButtonClicked,
+            onMediaHeld = onMediaHeld,
             modifier = modifier
         )
         is IsostaPostUiState.Error -> TextMessageScreen(
@@ -77,6 +82,7 @@ fun PostColumn(
     isostaPost: IsostaPost,
     onShareButtonClicked: (String) -> Unit,
     onUserButtonClicked: (IsostaUser) -> Unit,
+    onMediaHeld: (ImageRequest) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -88,6 +94,7 @@ fun PostColumn(
                 isostaPost = isostaPost,
                 onShareButtonClicked = onShareButtonClicked,
                 onUserButtonClicked = onUserButtonClicked,
+                onMediaHeld = onMediaHeld
             )
         }
         // Comments title text
@@ -116,6 +123,7 @@ fun PostCard(
     isostaPost: IsostaPost,
     onShareButtonClicked: (String) -> Unit,
     onUserButtonClicked: (IsostaUser) -> Unit,
+    onMediaHeld: (ImageRequest) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val haptics = LocalHapticFeedback.current
@@ -130,7 +138,10 @@ fun PostCard(
                 onClick = {onUserButtonClicked(isostaPost.poster)}
             )
             // Horizontal pager for media.
-            MediaPager(isostaPost.mediaList)
+            MediaPager(
+                mediaList = isostaPost.mediaList,
+                onMediaHeld = onMediaHeld
+            )
             // Description text
             Text(
                 text = isostaPost.postDescription,
@@ -220,6 +231,7 @@ fun AuthorInformation(
 @Composable
 fun MediaPager(
     mediaList: List<PostMedia>,
+    onMediaHeld: (ImageRequest) -> Unit,
     modifier: Modifier = Modifier
 ) {
     // Show all the media in this post in a horizontal pager
@@ -237,19 +249,22 @@ fun MediaPager(
         ) { page ->
             // Pager content
             print("LOG: the image src for this page is " + mediaList[page].mediaSrc)
+            val request = ImageRequest.Builder(context = LocalContext.current)
+                .data(mediaList[page].mediaSrc)
+                .crossfade(true)
+                .setHeader("User-Agent", "Mozilla/5.0")
+                .build()
             AsyncImage(
-                model = ImageRequest.Builder(context = LocalContext.current)
-                    .data(mediaList[page].mediaSrc)
-                    .crossfade(true)
-                    .setHeader("User-Agent", "Mozilla/5.0")
-                    .build(),
+                model = request,
                 error = painterResource(R.drawable.broken_image),
                 placeholder = painterResource(R.drawable.hourglass_top),
                 contentDescription = mediaList[page].mediaText,
                 contentScale = ContentScale.Fit,
                 modifier = Modifier
                     .fillMaxSize().clickable(
-                        onClick = {/* TODO: Open ShareSheet for media */}
+                        onClick = {
+                            onMediaHeld(request)
+                        }
                     ),
             )
 
@@ -375,6 +390,7 @@ fun PostScreenPreview() {
             postLink = "",
         ),
         onShareButtonClicked = {},
-        onUserButtonClicked = {}
+        onUserButtonClicked = {},
+        onMediaHeld = {}
     )
 }

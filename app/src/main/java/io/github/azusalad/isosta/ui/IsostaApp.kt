@@ -2,6 +2,8 @@ package io.github.azusalad.isosta.ui
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -19,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.FileProvider
 import io.github.azusalad.isosta.ui.screens.HomeScreen
 import io.github.azusalad.isosta.ui.screens.IsostaViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -27,6 +30,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import coil.ImageLoader
+import coil.request.ImageRequest
+import coil.request.SuccessResult
 import io.github.azusalad.isosta.model.IsostaUser
 import io.github.azusalad.isosta.ui.screens.PostScreen
 import io.github.azusalad.isosta.ui.screens.SearchScreen
@@ -34,6 +40,9 @@ import io.github.azusalad.isosta.ui.screens.SearchScreenPreview
 import io.github.azusalad.isosta.ui.screens.ThumbnailViewModel
 import io.github.azusalad.isosta.ui.screens.UserScreen
 import io.github.azusalad.isosta.ui.screens.UserViewModel
+import java.io.File
+import java.io.FileOutputStream
+import io.github.azusalad.isosta.BuildConfig
 
 // Contains composables that render what the user would see in the Isosta App
 
@@ -117,6 +126,9 @@ fun IsostaApp(
                         onShareButtonClicked = { postLink: String ->
                             sharePost(context = context, postLink = postLink)
                         },
+                        onMediaHeld = { request: ImageRequest ->
+                            isostaViewModel.getBitmap(context, request)
+                        },
                         onUserButtonClicked = { user: IsostaUser ->
                             navController.navigate(IsostaScreen.User.name)
                             println("LOG->IsostaApp.kt: loading user page for " + user.profileLink)
@@ -195,4 +207,42 @@ private fun sharePost(context: Context, postLink: String) {
             "Share this post"
         )
     )
+}
+
+// https://stackoverflow.com/questions/72887876/convert-jetpack-compose-image-into-bitmap-image-for-sharing-purpose
+fun shareBitmap(context: Context, bitmap: Bitmap) {
+    // Write the bitmap to a file
+    try {
+        val file = try {
+            val outputFile = File(context.cacheDir, "share.png")
+            val fos = FileOutputStream(outputFile)
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
+            fos.flush()
+            fos.close()
+            outputFile
+        } catch (e: Exception) {
+            Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show()
+            return
+        }
+        // Get uri for the file and then open share sheet with the uri
+        // https://stackoverflow.com/questions/56598480/couldnt-find-meta-data-for-provider-with-authority
+        // https://stackoverflow.com/questions/42516126/fileprovider-illegalargumentexception-failed-to-find-configured-root
+        val uri =
+            FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", file)
+        val shareIntent = Intent().apply {
+            action = Intent.ACTION_SEND
+            type = "image/png"
+            putExtra(Intent.EXTRA_STREAM, uri)
+        }
+        context.startActivity(
+            Intent.createChooser(
+                shareIntent,
+                "Share picture"
+            )
+        )
+    }
+    catch (e: Exception) {
+        println("LOG->IsostaApp.kt: " + e.toString())
+        Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show()
+    }
 }
