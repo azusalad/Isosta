@@ -56,8 +56,7 @@ fun HomeScreen(
 ) {
     // Switch statement shows different things depending on the IsostaUiState
     when (isostaHomeUiState) {
-        is IsostaHomeUiState.OfflineLoad -> {
-            val onFeedText = if (thumbnailUiState.thumbnailList.isEmpty()) "Welcome to Isosta\n\nFollow a user to receive their posts in your home feed." else ""
+        is IsostaHomeUiState.Display -> {
             HomePager(
                 thumbnailList = thumbnailUiState.thumbnailList,
                 userList = userUiState.userList,
@@ -66,7 +65,7 @@ fun HomeScreen(
                 onSearchButtonClicked = onSearchButtonClicked,
                 onRefreshButtonClicked = onRefreshButtonClicked,
                 modifier = modifier.fillMaxWidth(),
-                onFeedText = onFeedText,
+                onFeedText = if (thumbnailUiState.thumbnailList.isEmpty()) "Welcome to Isosta\n\nFollow a user to receive their posts in your home feed." else "",
                 contentPadding = contentPadding,
                 )
         }
@@ -78,18 +77,7 @@ fun HomeScreen(
             onSearchButtonClicked = onSearchButtonClicked,
             onRefreshButtonClicked = onRefreshButtonClicked,
             modifier = modifier.fillMaxWidth(),
-            onFeedText = "Loading thumbnails...",
-            contentPadding = contentPadding,
-        )
-        is IsostaHomeUiState.Error -> HomePager(
-            thumbnailList = arrayListOf(),
-            userList = userUiState.userList,
-            onThumbnailClicked = onThumbnailClicked,
-            onUserButtonClicked = onUserButtonClicked,
-            onSearchButtonClicked = onSearchButtonClicked,
-            onRefreshButtonClicked = onRefreshButtonClicked,
-            modifier = modifier.fillMaxWidth(),
-            onFeedText = "There was a error loading thumbnails:\n\n" + isostaHomeUiState.errorString,
+            onFeedText = isostaHomeUiState.text,
             contentPadding = contentPadding,
         )
     }

@@ -30,10 +30,8 @@ import kotlinx.coroutines.withContext
 
 // The mutable interface stores the status of the most recent web request
 sealed interface IsostaHomeUiState {
-//    data class Success(val thumbnailPhotos: List<Thumbnail>) : IsostaHomeUiState
-    data class Error(val errorString: String) : IsostaHomeUiState
-    object OfflineLoad : IsostaHomeUiState
-    object Loading : IsostaHomeUiState
+    object Display : IsostaHomeUiState
+    data class Loading(val text: String) : IsostaHomeUiState
 }
 
 sealed interface IsostaPostUiState {
@@ -69,7 +67,7 @@ class IsostaViewModel(
     private val userRepository: UserRoomRepository
 ): ViewModel() {
     // Mutable state stores the status of the most recent request.  The initial state is loading.
-    var isostaHomeUiState: IsostaHomeUiState by mutableStateOf(IsostaHomeUiState.OfflineLoad)
+    var isostaHomeUiState: IsostaHomeUiState by mutableStateOf(IsostaHomeUiState.Display)
         private set
         // ^ private setter
     var isostaPostUiState: IsostaPostUiState by mutableStateOf(IsostaPostUiState.Loading)
@@ -112,26 +110,32 @@ class IsostaViewModel(
 
     fun getThumbnailPhotos(thumbnailViewModel: ThumbnailViewModel, context: Context, users: List<IsostaUser>) {
         val delay = users.size.toLong() * 250  // Extra 250 ms delay per run for every additional user
+        var index = 0
         viewModelScope.launch {
-            isostaHomeUiState = IsostaHomeUiState.Loading
             // Might not be able to connect to website so need a try catch here.
             try {
                 // The viewModelScope.launch launches on the main thread which leads to network
                 // on main thread exception.  Use another dispatcher for background work.
                 for (user in users) {
+                    index++
+                    isostaHomeUiState = IsostaHomeUiState.Loading(
+                        text = "Fetching thumbnails...\n\n" +
+                                index + "/" + users.size + "\n" +
+                                user.profileHandle
+                    )
                     println("LOG->IsostaViewModel.kt: Attempting to fetch website: " + user.profileLink)
-                    Toast.makeText(context, "Fetching " + user.profileHandle, Toast.LENGTH_SHORT).show()
                     withContext(Dispatchers.IO) {
                         // Use the repository to get the thumbnail photos
                         val result = isostaUserRepository.getUserInfo(user.profileLink)
                         thumbnailViewModel.saveThumbnails(context, result.thumbnailList!!)
                         delay(delay)
-                        isostaHomeUiState = IsostaHomeUiState.OfflineLoad
+                        isostaHomeUiState = IsostaHomeUiState.Display
                     }
                 }
             } catch (e: Exception) {  // Previously IOException
-                isostaHomeUiState = IsostaHomeUiState.Error(e.toString())
-                println("LOG: There was an error fetching the website")
+                Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show()
+                isostaHomeUiState = IsostaHomeUiState.Display
+                println("LOG->IsostaViewModel.kt: There was an error fetching the website")
             }
         }
 
@@ -149,8 +153,8 @@ class IsostaViewModel(
                 }
             } catch (e: Exception) {  // Previously IOException
                 isostaPostUiState = IsostaPostUiState.Error(e.toString())
-                println("LOG: There was an error fetching the post")
-                println("LOG: the error for fetching the post is " + e)
+                println("LOG->IsostaViewModel.kt: There was an error fetching the post")
+                println("LOG->IsostaViewModel.kt: the error for fetching the post is " + e)
             }
         }
     }
@@ -159,7 +163,7 @@ class IsostaViewModel(
         viewModelScope.launch {
             isostaUserUiState = IsostaUserUiState.Loading
             try {
-                println("LOG: Attempting to fetch User")
+                println("LOG->IsostaViewModel.kt: Attempting to fetch User")
                 withContext(Dispatchers.IO) {
                     val result = isostaUserRepository.getUserInfo(url)
                     isostaUserUiState =
@@ -167,8 +171,8 @@ class IsostaViewModel(
                 }
             } catch (e: Exception) {  // Previously IOException
                 isostaUserUiState = IsostaUserUiState.Error(e.toString())
-                println("LOG: There was an error fetching the User")
-                println("LOG: the error for fetching the User is " + e)
+                println("LOG->IsostaViewModel.kt: There was an error fetching the User")
+                println("LOG->IsostaViewModel.kt: the error for fetching the User is " + e)
             }
         }
     }
