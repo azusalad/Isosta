@@ -11,6 +11,9 @@ import org.jsoup.Jsoup
 // Needs to be open to override in the FakeIsostaApiService test.
 open class IsostaApiService {
     private val hostName = "https://imginn.com"
+    private val secondsInHour: Long = 3600
+    private val secondsInDay: Long = 86400
+    private val secondsInMonth: Long = secondsInDay * 30
 
     open suspend fun getUserInfo(url: String = "https://imginn.com/suisei.daily.post/"): IsostaUser {
         // Initialize the list to add the thumbnails to
@@ -52,6 +55,7 @@ open class IsostaApiService {
             // Get the post link
             val postLink = hostName + i.getElementsByTag("a").attr("href")
             println("LOG->IsostaApiService.kt: the postLink is " + postLink)
+            val fuzzyTime = i.getElementsByClass("time")[0].text()
             // The src might be not be https source but instead //assets... so only take the https srcs
             if (imageSrc[0] == 'h') {
                 println("LOG->IsostaApiService.kt: the new imageSrc is: $imageSrc")
@@ -60,7 +64,7 @@ open class IsostaApiService {
                     text = imageText,
                     postLink = postLink,
                     sourceHandle = profileHandle,
-                    date = System.currentTimeMillis() / 1000L
+                    date = convertStringToDate(fuzzyTime)
                 )
                 thumbnailList.add(newThumbnail)
                 println("LOG->IsostaApiService.kt: Adding new thumbnail to list")
@@ -236,6 +240,29 @@ open class IsostaApiService {
             )
         }
         return userList
+    }
+
+    private fun convertStringToDate(fuzzy: String): Long {
+        // The input string will be something like:
+        // 21 hours ago
+        var currentTime = System.currentTimeMillis() / 1000L  // Unix time seconds
+        currentTime = (currentTime.floorDiv(secondsInHour) * secondsInHour)  // Round down time to nearest hour
+
+        try {
+            val fuzzyList = fuzzy.split(" ")
+            val multiplier = fuzzyList[0]
+            return when (fuzzyList[1]) {
+                "hour" -> currentTime - (secondsInHour)
+                "hours" -> currentTime - (multiplier.toLong() * secondsInHour)
+                "day" -> currentTime - (secondsInDay)
+                "days" -> currentTime - (multiplier.toLong() * secondsInDay)
+                "month" -> currentTime - (secondsInMonth)
+                "months" -> currentTime - (multiplier.toLong() * secondsInMonth)
+                else -> currentTime
+            }
+        } catch (e: Exception) {
+            return currentTime
+        }
     }
 }
 
