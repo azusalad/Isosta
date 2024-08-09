@@ -9,6 +9,7 @@ interface AppContainer {
     val isostaUserRepository: IsostaUserRepository
 
     val thumbnailRoomRepository: ThumbnailRoomRepository
+    val userRoomRepository: UserRoomRepository
 }
 
 class DefaultAppContainer(private val context: Context) : AppContainer {
@@ -26,5 +27,7 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
     override val thumbnailRoomRepository: ThumbnailRoomRepository by lazy {
         OfflineThumbnailRoomRepository(ThumbnailDatabase.loadDatabase(context).thumbnailDao())
     }
-
+    override val userRoomRepository: UserRoomRepository by lazy {
+        OfflineUserRoomRepository(UserDatabase.loadDatabase(context).userDao())
+    }
 }

@@ -46,6 +46,7 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     isostaHomeUiState: IsostaHomeUiState,
     thumbnailUiState: ThumbnailUiState,
+    userUiState: UserUiState,
     onThumbnailClicked: (String) -> Unit,
     onUserButtonClicked: (IsostaUser) -> Unit,
     onSearchButtonClicked: () -> Unit,
@@ -54,24 +55,24 @@ fun HomeScreen(
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
     // TODO: Remove this placeholder and put actual follow list in
-    val yui = "https://avatars.githubusercontent.com/u/68360714?v=4"
-    val userList = arrayListOf<IsostaUser>()
-    userList.add(
-        IsostaUser(
-            profilePicture = yui,
-            profileName = "Yui",
-            profileHandle = "@yui",
-            profileLink = "https://imginn.com/suisei.daily.post/",
-        )
-    )
-    userList.add(
-        IsostaUser(
-            profilePicture = yui,
-            profileName = "Yui2",
-            profileHandle = "@yui2",
-            profileLink = "https://imginn.com/suisei.daily.post/",
-        )
-    )
+//    val yui = "https://avatars.githubusercontent.com/u/68360714?v=4"
+//    val userList = arrayListOf<IsostaUser>()
+//    userList.add(
+//        IsostaUser(
+//            profilePicture = yui,
+//            profileName = "Yui",
+//            profileHandle = "@yui",
+//            profileLink = "https://imginn.com/suisei.daily.post/",
+//        )
+//    )
+//    userList.add(
+//        IsostaUser(
+//            profilePicture = yui,
+//            profileName = "Yui2",
+//            profileHandle = "@yui2",
+//            profileLink = "https://imginn.com/suisei.daily.post/",
+//        )
+//    )
 
     // Switch statement shows different things depending on the IsostaUiState
     when (isostaHomeUiState) {
@@ -79,7 +80,7 @@ fun HomeScreen(
             val onFeedText = if (thumbnailUiState.thumbnailList.isEmpty()) "Welcome to Isosta\n\nFollow a user to receive their posts in your home feed." else ""
             HomePager(
                 thumbnailList = thumbnailUiState.thumbnailList,
-                userList = userList,
+                userList = userUiState.userList,
                 onThumbnailClicked = onThumbnailClicked,
                 onUserButtonClicked = onUserButtonClicked,
                 onSearchButtonClicked = onSearchButtonClicked,
@@ -91,7 +92,7 @@ fun HomeScreen(
         }
         is IsostaHomeUiState.Loading -> HomePager(
             thumbnailList = arrayListOf(),
-            userList = userList,
+            userList = userUiState.userList,
             onThumbnailClicked = onThumbnailClicked,
             onUserButtonClicked = onUserButtonClicked,
             onSearchButtonClicked = onSearchButtonClicked,
@@ -102,7 +103,7 @@ fun HomeScreen(
         )
         is IsostaHomeUiState.Success -> HomePager(
             thumbnailList = isostaHomeUiState.thumbnailPhotos,
-            userList = userList,
+            userList = userUiState.userList,
             onThumbnailClicked = onThumbnailClicked,
             onUserButtonClicked = onUserButtonClicked,
             onSearchButtonClicked = onSearchButtonClicked,
@@ -113,7 +114,7 @@ fun HomeScreen(
         //is IsostaUiState.Success -> TextMessageScreen(text = isostaUiState.thumbnailPhotos, modifier = modifier.fillMaxWidth())
         is IsostaHomeUiState.Error -> HomePager(
             thumbnailList = arrayListOf(),
-            userList = userList,
+            userList = userUiState.userList,
             onThumbnailClicked = onThumbnailClicked,
             onUserButtonClicked = onUserButtonClicked,
             onSearchButtonClicked = onSearchButtonClicked,

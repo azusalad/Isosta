@@ -59,7 +59,8 @@ open class IsostaApiService {
                     picture = imageSrc,
                     text = imageText,
                     postLink = postLink,
-                    sourceHandle = profileHandle
+                    sourceHandle = profileHandle,
+                    date = System.currentTimeMillis() / 1000L
                 )
                 thumbnailList.add(newThumbnail)
                 println("LOG->IsostaApiService.kt: Adding new thumbnail to list")

@@ -13,6 +13,7 @@ import io.github.azusalad.isosta.IsostaApplication
 import io.github.azusalad.isosta.data.IsostaPostRepository
 import io.github.azusalad.isosta.data.IsostaUserRepository
 import io.github.azusalad.isosta.data.ThumbnailRoomRepository
+import io.github.azusalad.isosta.data.UserRoomRepository
 import io.github.azusalad.isosta.model.IsostaPost
 import io.github.azusalad.isosta.model.IsostaUser
 import io.github.azusalad.isosta.model.Thumbnail
@@ -56,11 +57,13 @@ sealed interface IsostaSearchUiState {
 }
 
 data class ThumbnailUiState(val thumbnailList: List<Thumbnail> = arrayListOf())
+data class UserUiState(val userList: List<IsostaUser> = arrayListOf())
 
 class IsostaViewModel(
     private val isostaPostRepository: IsostaPostRepository,
     private val isostaUserRepository: IsostaUserRepository,
-    private val thumbnailRepository: ThumbnailRoomRepository
+    private val thumbnailRepository: ThumbnailRoomRepository,
+    private val userRepository: UserRoomRepository
 ): ViewModel() {
     // Mutable state stores the status of the most recent request.  The initial state is loading.
     var isostaHomeUiState: IsostaHomeUiState by mutableStateOf(IsostaHomeUiState.OfflineLoad)
@@ -79,6 +82,13 @@ class IsostaViewModel(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
                 initialValue = ThumbnailUiState()
+            )
+    var userUiState: StateFlow<UserUiState> =
+        userRepository.loadAllUserStream().map { UserUiState(it) }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+                initialValue = UserUiState()
             )
 
     init {
@@ -109,7 +119,7 @@ class IsostaViewModel(
                     // Use the repository to get the thumbnail photos
                     val result = isostaUserRepository.getUserInfo(url)
                     isostaHomeUiState =
-                        IsostaHomeUiState.Success(result.thumbnailList)
+                        IsostaHomeUiState.Success(result.thumbnailList!!)
                 }
             } catch (e:Exception) {  // Previously IOException
                 isostaHomeUiState = IsostaHomeUiState.Error(e.toString())
@@ -182,11 +192,13 @@ class IsostaViewModel(
                 val isostaPostRepository = application.container.isostaPostRepository
                 val isostaUserRepository = application.container.isostaUserRepository
                 val thumbnailRoomRepository = application.container.thumbnailRoomRepository
+                val userRoomRepository = application.container.userRoomRepository
 
                 IsostaViewModel(
                     isostaPostRepository = isostaPostRepository,
                     isostaUserRepository = isostaUserRepository,
-                    thumbnailRepository = thumbnailRoomRepository
+                    thumbnailRepository = thumbnailRoomRepository,
+                    userRepository = userRoomRepository
                 )
             }
         }

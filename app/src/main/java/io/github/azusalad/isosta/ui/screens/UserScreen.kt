@@ -50,7 +50,7 @@ import kotlinx.coroutines.launch
 fun UserScreen(
     isostaUserUiState: IsostaUserUiState,
     onThumbnailClicked: (String) -> Unit,
-    onFollowClicked: (List<Thumbnail>) -> Unit,
+    onFollowClicked: (IsostaUser) -> Unit,
     modifier: Modifier = Modifier
 ) {
     // Switch statement shows different things depending on the IsostaUserUiState
@@ -73,7 +73,7 @@ fun UserScreen(
 fun UserColumn(
     user: IsostaUser,
     onThumbnailClicked: (String) -> Unit,
-    onFollowClicked: (List<Thumbnail>) -> Unit,
+    onFollowClicked: (IsostaUser) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -93,7 +93,7 @@ fun UserColumn(
             )
         }
         // Thumbnail lazy column
-        items(user.thumbnailList) { thumbnail ->
+        items(user.thumbnailList!!) { thumbnail ->
             ThumbnailCard(
                 thumbnail = thumbnail,
                 onThumbnailClicked = {onThumbnailClicked(thumbnail.postLink)},
@@ -112,7 +112,7 @@ fun UserBio(
     followerCount: String,
     followingCount: String,
     thumbnailViewModel: ThumbnailViewModel = viewModel(factory = ThumbnailViewModel.Factory),
-    onFollowClicked: (List<Thumbnail>) -> Unit,
+    onFollowClicked: (IsostaUser) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -184,7 +184,7 @@ fun UserBio(
                 .clickable(
                     onClick = {
                         /* TODO: Add button depressed state */
-                        onFollowClicked(user.thumbnailList)
+                        onFollowClicked(user)
                     }
                 )
 

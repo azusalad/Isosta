@@ -33,6 +33,7 @@ import io.github.azusalad.isosta.ui.screens.SearchScreen
 import io.github.azusalad.isosta.ui.screens.SearchScreenPreview
 import io.github.azusalad.isosta.ui.screens.ThumbnailViewModel
 import io.github.azusalad.isosta.ui.screens.UserScreen
+import io.github.azusalad.isosta.ui.screens.UserViewModel
 
 // Contains composables that render what the user would see in the Isosta App
 
@@ -63,7 +64,9 @@ fun IsostaApp(
         ) {
             val isostaViewModel: IsostaViewModel = viewModel(factory = IsostaViewModel.Factory)
             val thumbnailViewModel: ThumbnailViewModel = viewModel(factory = ThumbnailViewModel.Factory)
+            val userViewModel: UserViewModel = viewModel(factory = UserViewModel.Factory)
             val thumbnailUiState by isostaViewModel.thumbnailUiState.collectAsState()
+            val userUiState by isostaViewModel.userUiState.collectAsState()
             NavHost(
                 navController = navController,
                 startDestination = IsostaScreen.Home.name,
@@ -74,6 +77,7 @@ fun IsostaApp(
                     HomeScreen(
                         isostaHomeUiState = isostaViewModel.isostaHomeUiState,
                         thumbnailUiState = thumbnailUiState,
+                        userUiState = userUiState,
                         onThumbnailClicked = {
                             // it is the url to go to
                             //isostaViewModel.pageState.postLink = it
@@ -124,9 +128,10 @@ fun IsostaApp(
                             println("LOG: getting post info for " + url)
                             isostaViewModel.getPostInfo(url)
                         },
-                        onFollowClicked = {
-                            thumbnailViewModel.saveThumbnails(context = context, thumbnailList = it)
-                            Toast.makeText(context, "Saving thumbnails...", Toast.LENGTH_SHORT).show()
+                        onFollowClicked = { user: IsostaUser ->
+                            userViewModel.saveUser(context = context, user = user)
+                            thumbnailViewModel.saveThumbnails(context = context, thumbnailList = user.thumbnailList!!)
+                            Toast.makeText(context, "Following user...", Toast.LENGTH_SHORT).show()
                         }
                     )
                     //UserColumnPreview()

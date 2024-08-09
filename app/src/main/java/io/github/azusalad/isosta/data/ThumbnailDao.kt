@@ -11,14 +11,14 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ThumbnailDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)  // If existing item, just replace
-    suspend fun insert (user: Thumbnail)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)  // If existing item, ignore the new item
+    suspend fun insert(thumbnail: Thumbnail)
 
     @Update
-    suspend fun update(user: Thumbnail)
+    suspend fun update(thumbnail: Thumbnail)
 
     @Delete
-    suspend fun delete(user: Thumbnail)
+    suspend fun delete(thumbnail: Thumbnail)
 
     @Query("SELECT * from thumbnail WHERE postLink = :postLink")
     fun loadThumbnail(postLink: String): Flow<Thumbnail>

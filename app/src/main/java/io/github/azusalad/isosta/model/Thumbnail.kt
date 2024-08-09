@@ -10,8 +10,8 @@ data class Thumbnail (
     val picture: String,
     val text: String,
     val sourceHandle: String,
-    val date: Int = 0,
+    val date: Long = 0,
 
     //@ColumnInfo(typeAffinity = ColumnInfo.BLOB)
-    var pictureString: String? = null
+    var pictureString: String? = null  // Thumbnail picture as Base64
 )

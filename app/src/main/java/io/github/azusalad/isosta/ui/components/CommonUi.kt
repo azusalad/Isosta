@@ -70,7 +70,7 @@ fun ThumbnailCard(
     }
     catch (e: Exception) {
         picture = thumbnail.picture
-        Toast.makeText(LocalContext.current, e.toString()+ thumbnail.postLink, Toast.LENGTH_SHORT).show()
+        Toast.makeText(LocalContext.current, e.toString(), Toast.LENGTH_SHORT).show()
     }
     println("LOG->CommonUi.kt: The current picture is: " + picture)
     Card(
@@ -113,6 +113,14 @@ fun UserCard(
     onUserButtonClicked: (IsostaUser) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var picture: Any
+    try {
+        picture = user.pictureString?.let { stringToBitmap(it) } ?: user.profilePicture
+    }
+    catch (e: Exception) {
+        picture = user.profilePicture
+        Toast.makeText(LocalContext.current, e.toString(), Toast.LENGTH_SHORT).show()
+    }
     Card(modifier = modifier.fillMaxWidth()) {
         Row(
             modifier = modifier
@@ -123,7 +131,7 @@ fun UserCard(
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(context = LocalContext.current)
-                    .data(user.profilePicture)
+                    .data(picture)
                     .crossfade(true)
                     .setHeader("User-Agent", "Mozilla/5.0")
                     .build(),
