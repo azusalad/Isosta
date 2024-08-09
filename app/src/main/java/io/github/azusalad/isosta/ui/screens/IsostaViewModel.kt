@@ -1,5 +1,6 @@
 package io.github.azusalad.isosta.ui.screens
 
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -18,6 +19,7 @@ import io.github.azusalad.isosta.model.IsostaPost
 import io.github.azusalad.isosta.model.IsostaUser
 import io.github.azusalad.isosta.model.Thumbnail
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -27,7 +29,7 @@ import kotlinx.coroutines.withContext
 
 // The mutable interface stores the status of the most recent web request
 sealed interface IsostaHomeUiState {
-    data class Success(val thumbnailPhotos: List<Thumbnail>) : IsostaHomeUiState
+//    data class Success(val thumbnailPhotos: List<Thumbnail>) : IsostaHomeUiState
     data class Error(val errorString: String) : IsostaHomeUiState
     object OfflineLoad : IsostaHomeUiState
     object Loading : IsostaHomeUiState
@@ -107,19 +109,22 @@ class IsostaViewModel(
 //        isostaHomeUiState = IsostaHomeUiState.Success(thumbnailList)
     }
 
-    fun getThumbnailPhotos(url: String = "https://imginn.com/suisei.daily.post/") {
+    fun getThumbnailPhotos(thumbnailViewModel: ThumbnailViewModel, context: Context, url: String, delay: Long) {
         viewModelScope.launch {
             isostaHomeUiState = IsostaHomeUiState.Loading
             // Might not be able to connect to website so need a try catch here.
             try {
                 // The viewModelScope.launch launches on the main thread which leads to network
                 // on main thread exception.  Use another dispatcher for background work.
-                println("LOG: Attempting to fetch website")
+                println("LOG->IsostaViewModel.kt: Attempting to fetch website: " + url)
                 withContext(Dispatchers.IO) {
                     // Use the repository to get the thumbnail photos
                     val result = isostaUserRepository.getUserInfo(url)
-                    isostaHomeUiState =
-                        IsostaHomeUiState.Success(result.thumbnailList!!)
+                    thumbnailViewModel.saveThumbnails(context, result.thumbnailList!!)
+                    delay(delay)
+                    isostaHomeUiState = IsostaHomeUiState.OfflineLoad
+//                    isostaHomeUiState =
+//                        IsostaHomeUiState.Success(result.thumbnailList!!)
                 }
             } catch (e:Exception) {  // Previously IOException
                 isostaHomeUiState = IsostaHomeUiState.Error(e.toString())

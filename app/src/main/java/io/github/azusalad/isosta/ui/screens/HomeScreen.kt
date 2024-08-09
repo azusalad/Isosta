@@ -54,26 +54,6 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
-    // TODO: Remove this placeholder and put actual follow list in
-//    val yui = "https://avatars.githubusercontent.com/u/68360714?v=4"
-//    val userList = arrayListOf<IsostaUser>()
-//    userList.add(
-//        IsostaUser(
-//            profilePicture = yui,
-//            profileName = "Yui",
-//            profileHandle = "@yui",
-//            profileLink = "https://imginn.com/suisei.daily.post/",
-//        )
-//    )
-//    userList.add(
-//        IsostaUser(
-//            profilePicture = yui,
-//            profileName = "Yui2",
-//            profileHandle = "@yui2",
-//            profileLink = "https://imginn.com/suisei.daily.post/",
-//        )
-//    )
-
     // Switch statement shows different things depending on the IsostaUiState
     when (isostaHomeUiState) {
         is IsostaHomeUiState.OfflineLoad -> {
@@ -98,20 +78,9 @@ fun HomeScreen(
             onSearchButtonClicked = onSearchButtonClicked,
             onRefreshButtonClicked = onRefreshButtonClicked,
             modifier = modifier.fillMaxWidth(),
-            onFeedText = "Loading thumbnails",
+            onFeedText = "Loading thumbnails...",
             contentPadding = contentPadding,
         )
-        is IsostaHomeUiState.Success -> HomePager(
-            thumbnailList = isostaHomeUiState.thumbnailPhotos,
-            userList = userUiState.userList,
-            onThumbnailClicked = onThumbnailClicked,
-            onUserButtonClicked = onUserButtonClicked,
-            onSearchButtonClicked = onSearchButtonClicked,
-            onRefreshButtonClicked = onRefreshButtonClicked,
-            modifier = modifier.fillMaxWidth(),
-            contentPadding = contentPadding,
-        )
-        //is IsostaUiState.Success -> TextMessageScreen(text = isostaUiState.thumbnailPhotos, modifier = modifier.fillMaxWidth())
         is IsostaHomeUiState.Error -> HomePager(
             thumbnailList = arrayListOf(),
             userList = userUiState.userList,
@@ -184,8 +153,8 @@ fun HomePager(
                     verticalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    RefreshBar(onRefreshButtonClicked = onRefreshButtonClicked)
                     if (onFeedText == "") {
+                        RefreshBar(onRefreshButtonClicked = onRefreshButtonClicked)
                         ThumbnailList(
                             thumbnailList = thumbnailList,
                             onThumbnailClicked = onThumbnailClicked,

@@ -73,6 +73,7 @@ fun IsostaApp(
                 modifier = Modifier.padding(paddingValues)
             ) {
                 composable(route = IsostaScreen.Home.name) {
+                    val context = LocalContext.current
                     // The main home screen and feed
                     HomeScreen(
                         isostaHomeUiState = isostaViewModel.isostaHomeUiState,
@@ -96,7 +97,14 @@ fun IsostaApp(
                         },
                         onRefreshButtonClicked = {
                             println("LOG->IsostaApp.kt: Refresh button clicked")
-                            isostaViewModel.getThumbnailPhotos()  // TODO: Put in an argument
+                            for (user in userUiState.userList) {
+                                isostaViewModel.getThumbnailPhotos(
+                                    thumbnailViewModel = thumbnailViewModel,
+                                    context = context,
+                                    url = user.profileLink,
+                                    delay = userUiState.userList.size.toLong() * 250  // Extra 250 ms delay per run for every additional user
+                                )
+                            }
                         }
                         // The content padding here is not needed anymore due to the padding being
                         // put on the NavHost

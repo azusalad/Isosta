@@ -17,7 +17,9 @@ import coil.request.SuccessResult
 import io.github.azusalad.isosta.IsostaApplication
 import io.github.azusalad.isosta.data.ThumbnailRoomRepository
 import io.github.azusalad.isosta.model.Thumbnail
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 
 class ThumbnailViewModel(private val thumbnailRoomRepository: ThumbnailRoomRepository) : ViewModel() {

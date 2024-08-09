@@ -8,6 +8,8 @@ interface UserRoomRepository {
 
     fun loadAllUserStream(): Flow<List<IsostaUser>>
 
+    fun loadAllLinkStream(): Flow<List<String>>
+
     fun loadUserStream(userHandle: String): Flow<IsostaUser?>
 
     suspend fun insertUser(user: IsostaUser)

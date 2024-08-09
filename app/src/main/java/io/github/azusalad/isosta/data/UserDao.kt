@@ -7,7 +7,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import io.github.azusalad.isosta.model.IsostaUser
-import io.github.azusalad.isosta.model.Thumbnail
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -26,4 +25,7 @@ interface UserDao {
 
     @Query("SELECT * from user ORDER BY profileHandle ASC")
     fun loadAllUser(): Flow<List<IsostaUser>>
+
+    @Query("SELECT DISTINCT profileLink from user ORDER BY profileHandle ASC")
+    fun loadAllLink(): Flow<List<String>>
 }
