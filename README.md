@@ -4,6 +4,7 @@
 Anonymous Instagram viewer for Android, powered by [Imginn](https://imginn.com) (previously picuki.me).
 
 ## Screenshots
+![Screenshots](./assets/screens.png)
 
 ## Installation
 Visit the releases page.
