@@ -1,5 +1,5 @@
 # Isosta
-![IsostaLogo](./assets/isosta.png) ![Isosta App Icon](./assets/appicon.png)
+![Isosta Logo and App Icon](./assets/logos.png) 
 
 Anonymous Instagram viewer for Android, powered by [Imginn](https://imginn.com) (previously picuki.me).
 
