@@ -8,7 +8,7 @@ Anonymous Instagram viewer for Android, powered by [Imginn](https://imginn.com) 
 Screen recording in `./assets/screenrecording.mp4`
 
 ## Installation
-Visit the releases page.
+Visit the [releases page](https://github.com/azusalad/Isosta/releases).
 
 ## Features
 * Browse Instagram anonymously, through [Imginn](https://imginn.com).
