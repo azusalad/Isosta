@@ -5,6 +5,7 @@ Anonymous Instagram viewer for Android, powered by [Imginn](https://imginn.com) 
 
 ## Screenshots
 ![Screenshots](./assets/screens.png)
+Screen recording in `./assets/screenrecording.mp4`
 
 ## Installation
 Visit the releases page.
