@@ -65,7 +65,7 @@ fun HomeScreen(
                 onSearchButtonClicked = onSearchButtonClicked,
                 onRefreshButtonClicked = onRefreshButtonClicked,
                 modifier = modifier.fillMaxWidth(),
-                onFeedText = if (thumbnailUiState.thumbnailList.isEmpty()) "Welcome to Isosta\n\nFollow a user to receive their posts in your home feed." else "",
+                onFeedText = if (userUiState.userList.isEmpty()) "Welcome to Isosta\n\nFollow a user to receive their posts in your home feed." else "",
                 contentPadding = contentPadding,
                 )
         }
