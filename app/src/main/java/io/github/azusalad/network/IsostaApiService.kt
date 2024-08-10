@@ -15,7 +15,7 @@ open class IsostaApiService {
     private val secondsInDay: Long = 86400
     private val secondsInMonth: Long = secondsInDay * 30
 
-    open suspend fun getUserInfo(url: String = "https://imginn.com/suisei.daily.post/"): IsostaUser {
+    open suspend fun getUserInfo(url: String): IsostaUser {
         // Initialize the list to add the thumbnails to
         val thumbnailList = arrayListOf<Thumbnail>()
         // Fetch the website with user agent so we don't get forbidden page
