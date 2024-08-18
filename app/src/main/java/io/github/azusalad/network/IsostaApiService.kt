@@ -53,7 +53,10 @@ open class IsostaApiService {
             val imageText = i.getElementsByTag("img").attr("alt")
             println("LOG->IsostaApiService.kt: the imageText is " + imageSrc)
             // Get the post link
-            val postLink = hostName + i.getElementsByTag("a").attr("href")
+            var postLink = hostName + i.getElementsByTag("a").attr("href")
+            if (postLink.last() != '/') {
+                postLink += '/'
+            }
             println("LOG->IsostaApiService.kt: the postLink is " + postLink)
             val fuzzyTime = i.getElementsByClass("time")[0].text()
             // The src might be not be https source but instead //assets... so only take the https srcs
