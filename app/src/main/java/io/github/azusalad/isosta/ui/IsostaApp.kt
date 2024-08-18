@@ -109,7 +109,8 @@ fun IsostaApp(
                             isostaViewModel.getThumbnailPhotos(
                                     thumbnailViewModel = thumbnailViewModel,
                                     context = context,
-                                    users = userUiState.userList
+                                    users = userUiState.userList,
+                                    thumbnailUiState = thumbnailUiState
                                 )
                         }
                         // The content padding here is not needed anymore due to the padding being

@@ -116,7 +116,7 @@ class IsostaViewModel(
 //        isostaHomeUiState = IsostaHomeUiState.Success(thumbnailList)
     }
 
-    fun getThumbnailPhotos(thumbnailViewModel: ThumbnailViewModel, context: Context, users: List<IsostaUser>) {
+    fun getThumbnailPhotos(thumbnailViewModel: ThumbnailViewModel, context: Context, users: List<IsostaUser>, thumbnailUiState: ThumbnailUiState) {
         val delay = users.size.toLong() * 250  // Extra 250 ms delay per run for every additional user
         var index = 0
         viewModelScope.launch {
@@ -140,6 +140,9 @@ class IsostaViewModel(
                         isostaHomeUiState = IsostaHomeUiState.Display
                     }
                 }
+                // This does not fix new thumbnails just fetched, but those thumbnails should
+                // not have the problem anyway since the getUserInfo() function has been updated
+                thumbnailViewModel.fixSlash(thumbnailUiState.thumbnailList)
             } catch (e: Exception) {  // Previously IOException
                 Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show()
                 isostaHomeUiState = IsostaHomeUiState.Display

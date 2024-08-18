@@ -53,6 +53,31 @@ class ThumbnailViewModel(private val thumbnailRoomRepository: ThumbnailRoomRepos
         }
     }
 
+    fun fixSlash(thumbnailList: List<Thumbnail>) {
+        viewModelScope.launch {
+            for (thumbnail in thumbnailList) {
+                if (thumbnail.postLink.last() != '/') {
+                    println("LOG->ThumbnailViewModel.kt: Fixing slash for " + thumbnail.postLink)
+                    val oldThumbnail = thumbnail
+                    println("LOG->ThumbnailViewModel.kt: Deleting bad thumbnail...")
+                    thumbnailRoomRepository.deleteThumbnail(oldThumbnail)
+                    println("LOG->ThumbnailViewModel.kt: Inserting new thumbnail...")
+                    thumbnailRoomRepository.insertThumbnail(
+                        Thumbnail(
+                            postLink = oldThumbnail.postLink + '/',
+                            picture = oldThumbnail.picture,
+                            text = oldThumbnail.text,
+                            sourceHandle = oldThumbnail.sourceHandle,
+                            date = oldThumbnail.date,
+                            pictureString = oldThumbnail.pictureString
+                        )
+                    )
+                    println("LOG->ThumbnailViewModel.kt: Success insert new thumbnail")
+                }
+            }
+        }
+    }
+
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
