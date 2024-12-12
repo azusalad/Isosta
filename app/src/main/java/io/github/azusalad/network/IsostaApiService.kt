@@ -6,6 +6,7 @@ import io.github.azusalad.isosta.model.IsostaPost
 import io.github.azusalad.isosta.model.PostMedia
 import io.github.azusalad.isosta.model.Thumbnail
 import org.jsoup.Jsoup
+import java.net.URLEncoder
 
 
 // Needs to be open to override in the FakeIsostaApiService test.
@@ -16,10 +17,13 @@ open class IsostaApiService {
     private val secondsInMonth: Long = secondsInDay * 30
 
     open suspend fun getUserInfo(url: String): IsostaUser {
+        println("LOG->IsostaApiService.kt: getUserInfo() called with url $url")
+        val urlFixed = encodeLink(url)
+        println("LOG->IsostaApiService.kt: the fixed url $urlFixed")
         // Initialize the list to add the thumbnails to
         val thumbnailList = arrayListOf<Thumbnail>()
         // Fetch the website with user agent so we don't get forbidden page
-        val doc = Jsoup.connect(url).userAgent("Mozilla/5.0").get()
+        val doc = Jsoup.connect(urlFixed).userAgent("Mozilla/5.0").get()
         println("INFO->IsostaApiService.kt: The doc is " + doc)
 
         // Get user information
@@ -266,6 +270,23 @@ open class IsostaApiService {
         } catch (e: Exception) {
             return currentTime
         }
+    }
+
+    private fun encodeLink(url: String): String {
+        println("LOG->IsostaApiService.kt: removeBrackets() called with $url")
+        var urlList = url.split('/').toMutableList()
+        if (urlList.last() == "") {
+            urlList.removeLast()
+        }
+
+        urlList[3] = URLEncoder.encode(urlList[3], "UTF-8")
+        var result = ""
+        for (part in urlList) {
+            result += part
+            result += "/"
+        }
+
+        return result
     }
 }
 
