@@ -1,5 +1,6 @@
 package io.github.azusalad.network
 
+import io.github.azusalad.isosta.IsostaApplication
 import io.github.azusalad.isosta.model.IsostaComment
 import io.github.azusalad.isosta.model.IsostaUser
 import io.github.azusalad.isosta.model.IsostaPost
@@ -19,7 +20,7 @@ open class IsostaApiService {
         // Initialize the list to add the thumbnails to
         val thumbnailList = arrayListOf<Thumbnail>()
         // Fetch the website with user agent so we don't get forbidden page
-        val doc = Jsoup.connect(url).userAgent("Mozilla/5.0").get()
+        val doc = Jsoup.connect(url).userAgent(IsostaApplication.USER_AGENT).get()
         println("INFO->IsostaApiService.kt: The doc is " + doc)
 
         // Get user information
@@ -95,7 +96,7 @@ open class IsostaApiService {
         val mediaList = arrayListOf<PostMedia>()
         val commentList = arrayListOf<IsostaComment>()
         // Fetch the website with user agent so we don't get forbidden page
-        val doc = Jsoup.connect(url).userAgent("Mozilla/5.0").get()
+        val doc = Jsoup.connect(url).userAgent(IsostaApplication.USER_AGENT).get()
         println("INFO: The doc of the post: " + doc)
 
         // Get the poster's information
@@ -209,7 +210,7 @@ open class IsostaApiService {
         val userList = arrayListOf<IsostaUser>()
 
         println("LOG->IsostaApiService.kt: Performing network request with url: " + url)
-        val doc = Jsoup.connect(url).userAgent("Mozilla/5.0").get()
+        val doc = Jsoup.connect(url).userAgent(IsostaApplication.USER_AGENT).get()
         println("INFO->IsostaApiService.kt: The doc of the post: " + doc)
 
         val allUserInfo = doc.getElementsByClass("tab-item user-item")

@@ -31,7 +31,7 @@ class UserViewModel(private val userRoomRepository: UserRoomRepository) : ViewMo
             val loader = ImageLoader(context)
             val request = ImageRequest.Builder(context)
                 .data(user.profilePicture)
-                .setHeader("User-Agent", "Mozilla/5.0")
+                .setHeader("User-Agent", IsostaApplication.USER_AGENT)
                 .allowHardware(false)
                 .build()
 

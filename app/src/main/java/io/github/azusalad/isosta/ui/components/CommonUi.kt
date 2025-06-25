@@ -31,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import io.github.azusalad.isosta.IsostaApplication
 import io.github.azusalad.isosta.R
 import io.github.azusalad.isosta.model.IsostaUser
 import io.github.azusalad.isosta.model.Thumbnail
@@ -83,7 +84,7 @@ fun ThumbnailCard(
                 model = ImageRequest.Builder(context = LocalContext.current)
                     .data(picture)
                     .crossfade(true)
-                    .setHeader("User-Agent", "Mozilla/5.0")
+                    .setHeader("User-Agent", IsostaApplication.USER_AGENT)
                     .build(),
                 error = painterResource(R.drawable.broken_image),
                 placeholder = painterResource(R.drawable.hourglass_top),
@@ -133,7 +134,7 @@ fun UserCard(
                 model = ImageRequest.Builder(context = LocalContext.current)
                     .data(picture)
                     .crossfade(true)
-                    .setHeader("User-Agent", "Mozilla/5.0")
+                    .setHeader("User-Agent", IsostaApplication.USER_AGENT)
                     .build(),
                 error = painterResource(R.drawable.broken_image),
                 placeholder = painterResource(R.drawable.hourglass_top),

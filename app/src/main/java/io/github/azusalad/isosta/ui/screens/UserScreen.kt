@@ -40,6 +40,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import io.github.azusalad.isosta.IsostaApplication
 import io.github.azusalad.isosta.model.Thumbnail
 import io.github.azusalad.isosta.ui.components.TextMessageScreen
 import io.github.azusalad.isosta.ui.components.ThumbnailCard
@@ -136,7 +137,7 @@ fun UserBio(
             model = ImageRequest.Builder(context = LocalContext.current)
                 .data(user.profilePicture)
                 .crossfade(true)
-                .setHeader("User-Agent", "Mozilla/5.0")
+                .setHeader("User-Agent", IsostaApplication.USER_AGENT)
                 .build(),
             error = painterResource(R.drawable.broken_image),
             placeholder = painterResource(R.drawable.hourglass_top),

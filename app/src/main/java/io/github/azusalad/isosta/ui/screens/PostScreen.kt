@@ -43,6 +43,7 @@ import coil.ImageLoader
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.request.SuccessResult
+import io.github.azusalad.isosta.IsostaApplication
 import io.github.azusalad.isosta.R
 import io.github.azusalad.isosta.model.IsostaComment
 import io.github.azusalad.isosta.model.IsostaPost
@@ -179,7 +180,7 @@ fun AuthorInformation(
                 model = ImageRequest.Builder(context = LocalContext.current)
                     .data(poster.profilePicture)
                     .crossfade(true)
-                    .setHeader("User-Agent", "Mozilla/5.0")
+                    .setHeader("User-Agent", IsostaApplication.USER_AGENT)
                     .build(),
                 error = painterResource(R.drawable.broken_image),
                 placeholder = painterResource(R.drawable.hourglass_top),
@@ -252,7 +253,7 @@ fun MediaPager(
             val request = ImageRequest.Builder(context = LocalContext.current)
                 .data(mediaList[page].mediaSrc)
                 .crossfade(true)
-                .setHeader("User-Agent", "Mozilla/5.0")
+                .setHeader("User-Agent", IsostaApplication.USER_AGENT)
                 .build()
             AsyncImage(
                 model = request,
@@ -309,7 +310,7 @@ fun CommentCard(
                 model = ImageRequest.Builder(context = LocalContext.current)
                     .data(isostaComment.user.profilePicture)
                     .crossfade(true)
-                    .setHeader("User-Agent", "Mozilla/5.0")
+                    .setHeader("User-Agent", IsostaApplication.USER_AGENT)
                     .build(),
                 error = painterResource(R.drawable.broken_image),
                 placeholder = painterResource(R.drawable.hourglass_top),
